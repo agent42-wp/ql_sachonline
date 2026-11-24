@@ -3,106 +3,113 @@
 > **Bài cá nhân 2 – Điện toán đám mây**
 > - **Sinh viên**: Nguyễn Minh Khôi — **MSSV**: `2324802010261`
 > - **VPS triển khai**: `vps-2324802010261` (Ubuntu 26.04.1 LTS, 2 vCPU, 2 GB RAM, 20 GB Disk, IP tĩnh `192.168.100.20/24`)
-> - **Stack**: Python **FastAPI** (Gunicorn + UvicornWorker + `systemd`) · Frontend **HTML/CSS/JS** · **MariaDB** · **Nginx Reverse Proxy** · **UFW**
+> - **Stack**: Python **FastAPI** (Gunicorn + UvicornWorker + `systemd`) · Frontend **HTML/CSS/JS** · **MariaDB** · **Nginx Reverse Proxy** · **UFW Firewall**
+> - **Mã nguồn Repo**: [https://github.com/agent42-wp/ql_sachonline.git](https://github.com/agent42-wp/ql_sachonline.git)
 
 ---
 
-## 1. Kiến trúc Hệ thống
+## 1. Kiến trúc Hệ thống & Luồng Mạng
+
+Hệ thống được thiết kế theo mô hình 3 lớp (3-tier architecture). Tiến trình Backend và Cơ sở dữ liệu **chỉ lắng nghe địa chỉ nội bộ `127.0.0.1`**, mọi truy cập bên ngoài đều phải đi qua Nginx Reverse Proxy cổng `80` và tường lửa UFW:
 
 ```text
-Trình duyệt Laptop (http://192.168.100.20)
-        │  HTTP :80
-        ▼
-  [ UFW Firewall ]  ← Mặc định chặn vào; chỉ mở 80/tcp và 22/tcp từ 192.168.100.0/24, 192.168.146.1
-        │
-        ▼
-  [ Nginx :80 ] ──( / & /Images/ )──► Frontend tĩnh (HTML/CSS/JS) & Thư mục Images/
-        │
-        └──( /api/* )────────► FastAPI Backend (systemd, CHỈ lắng nghe 127.0.0.1:8000)
-                                      │
-                                      ▼ (PyMySQL + user riêng sachonline_app)
-                               [ MariaDB ] (CHỈ lắng nghe 127.0.0.1:3306)
+[ Trình duyệt Laptop Ubuntu / Máy chủ Mạng ]
+ ├── Kết nối trực tiếp (nếu nằm cùng dải mạng ảo 192.168.100.0/24):
+ │     ► http://192.168.100.20
+ └── Kết nối qua Hyper-V NAT Port-Forwarding (từ máy 192.168.146.1):
+       ► http://192.168.146.123:80  ──(NetNatStaticMapping :80)──► 192.168.100.20:80
+                                                                       │
+                                                                       ▼
+                                                             [ UFW Firewall ] (Mở 80/tcp, 22/tcp từ 192.168.100.0/24 & 192.168.146.1)
+                                                                       │
+                                                                       ▼
+                                                             [ Nginx Proxy :80 ]
+                                                               ├── (/ & /Images/) ─► Static Files /opt/sachonline/frontend
+                                                               └── (/api/*) ──────► FastAPI Backend (127.0.0.1:8000 via Gunicorn + systemd)
+                                                                                           │
+                                                                                           ▼
+                                                                                    [ MariaDB ] (127.0.0.1:3306, user: sachonline_app)
 ```
 
 ---
 
-## 2. Chuyển đổi Cơ sở Dữ liệu từ SQL Server (`SachOnline.sql`) sang MariaDB
+## 2. Chuyển đổi Cơ sở Dữ liệu từ SQL Server sang MariaDB
 
-Tệp gốc `SachOnline.sql` (T-SQL / SQL Server) đã được chuyển đổi hoàn chỉnh sang [database/sachonline_mariadb.sql](database/sachonline_mariadb.sql) với 13 bảng (`CHUDE`, `NHAXUATBAN`, `SACH`, `TACGIA`, `VIETSACH`, `KHACHHANG`, `DONDATHANG`, `CHITIETDATHANG`, `TRANGTIN`, `SLIDER`, `BINHLUAN`, `ADMIN`, `MENU`):
+Lược đồ cơ sở dữ liệu và dữ liệu mẫu gốc từ hệ thống SQL Server đã được chuyển đổi hoàn chỉnh sang MariaDB tại [database/sachonline_mariadb.sql](database/sachonline_mariadb.sql) gồm 13 bảng (`CHUDE`, `NHAXUATBAN`, `SACH`, `TACGIA`, `VIETSACH`, `KHACHHANG`, `DONDATHANG`, `CHITIETDATHANG`, `TRANGTIN`, `SLIDER`, `BINHLUAN`, `ADMIN`, `MENU`):
 
-| Hạng mục | SQL Server (`SachOnline.sql`) | MariaDB (`sachonline_mariadb.sql`) |
+| Hạng mục | SQL Server (`SachOnline.sql`) | MariaDB (`database/sachonline_mariadb.sql`) |
 |---|---|---|
 | Tự tăng khóa chính | `INT IDENTITY(1,1)` | `INT AUTO_INCREMENT` |
 | Chuỗi Unicode | `NVARCHAR(n)`, `NTEXT`, `N'...'` | `VARCHAR(n)`, `TEXT`, `utf8mb4_unicode_ci` |
 | Thời gian | `SMALLDATETIME`, `GETDATE()`, `MM/DD/YYYY` | `DATETIME`, `CURRENT_TIMESTAMP`, ISO `YYYY-MM-DD` |
-| Ngày dạng hex | `CAST(0x95450000 AS SmallDateTime)`, `0x93F90000` | `'2004-08-16 00:00:00'`, `'2003-09-19 00:00:00'` |
-| Tiền tệ / Logic | `MONEY`, `BIT DEFAULT(0)` | `DECIMAL(12,2)`, `TINYINT(1) DEFAULT 0` |
-| Khóa ngoại lỗi gốc | `VIETSACH (MaSach=24, MaTG=2)` không tồn tại trong `SACH` | Đã loại bỏ dòng orphan để đảm bảo toàn vẹn FK |
-| Bảo mật mật khẩu | `VARCHAR(64)` + `SHA2_256` không muối | `VARCHAR(255)` + băm **bcrypt** (`$2b$12$...`, có salt ngẫu nhiên) |
+| Ngày dạng hex | `CAST(0x95450000 AS SmallDateTime)` | Chuyển đổi thành chuỗi ISO `'2004-08-16 00:00:00'` |
+| Kiểu dữ liệu | `MONEY`, `BIT DEFAULT(0)` | `DECIMAL(12,2)`, `TINYINT(1) DEFAULT 0` |
+| Ràng buộc Khóa ngoại | Bảng `VIETSACH` chứa dữ liệu orphan | Loại bỏ dòng mâu thuẫn FK để đảm bảo toàn vẹn dữ liệu |
+| Mật khẩu người dùng | Mật khẩu văn bản thuần / SHA2_256 | Băm **bcrypt** (`$2b$12$...`, tự động sinh salt ngẫu nhiên) |
 
 ---
 
-## 3. Tính năng & Bảo mật đã cài đặt
+## 3. Chức năng chính & Các biện pháp Bảo mật
 
-- **Xác thực người dùng**:
-  - `POST /api/auth/register`: Đăng ký tài khoản mới (`KHACHHANG`), kiểm tra trùng tài khoản/email, băm mật khẩu bằng **bcrypt**.
-  - `POST /api/auth/login` & `POST /api/auth/logout` & `GET /api/auth/me`: Đăng nhập bằng tài khoản `ADMIN` hoặc `KHACHHANG`, cấp phiên JWT lưu trong **`HttpOnly; SameSite=Lax` cookie** (chống đọc token qua XSS, không dùng `localStorage`) đồng thời hỗ trợ header `Authorization: Bearer`.
-- **Quản lý Sách (CRUD)**:
-  - `GET /api/books` (tìm kiếm theo tên, lọc theo Chủ đề & NXB, phân trang), `GET /api/books/{id}`.
-  - `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}` (yêu cầu đăng nhập; chặn xóa sách đã nằm trong đơn đặt hàng với mã `409`).
-- **Tăng cường bảo mật**:
-  - Truy vấn tham số hóa qua SQLAlchemy ORM (chống SQL Injection).
-  - Frontend tạo DOM bằng `document.createElement` và `textContent` (không dùng `innerHTML` với dữ liệu từ server/người dùng → chống XSS).
-  - Nginx cấu hình `server_tokens off`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Content-Security-Policy`.
-  - Bí mật (mật khẩu DB, `JWT_SECRET_KEY`) nằm trong `.env` (quyền `600`, bị chặn trong `.gitignore`); repo chỉ chứa `.env.example`.
+- **Xác thực phiên làm việc (Authentication & Session)**:
+  - `POST /api/auth/register`: Đăng ký tài khoản khách hàng, băm mật khẩu bằng **bcrypt**.
+  - `POST /api/auth/login`: Xác thực tài khoản `ADMIN` hoặc `KHACHHANG`, cấp token JWT lưu trong cookie **`HttpOnly; SameSite=Lax`** (chống đánh cắp token qua XSS).
+  - `GET /api/auth/me` & `POST /api/auth/logout`: Kiểm tra và hủy phiên làm việc.
+- **Quản lý Sách (CRUD - Create, Read, Update, Delete)**:
+  - `GET /api/books`: Tìm kiếm theo tên sách, lọc theo chủ đề/NXB, phân trang.
+  - `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}`: Yêu cầu quyền quản trị viên; kiểm tra ràng buộc không cho xóa sách đang thuộc đơn đặt hàng (`409 Conflict`).
+- **An toàn bảo mật**:
+  - Truy vấn tham số hóa chống **SQL Injection** thông qua SQLAlchemy ORM.
+  - Frontend render dữ liệu bằng `textContent` và `document.createElement` chống **XSS**.
+  - Nginx cấu hình các header an toàn: `server_tokens off`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`.
+  - Toàn bộ tham số nhạy cảm (mật khẩu DB, `JWT_SECRET_KEY`) lưu trong `/opt/sachonline/.env` (phân quyền `600`, không đưa lên Git).
 
 ---
 
-## 4. Hướng dẫn Cài đặt từ đầu trên VPS (`vps-2324802010261`)
+## 4. Hướng dẫn Triển khai Chi tiết trên VPS (`vps-2324802010261`)
 
-### Cách 1: Chạy script tự động (khuyến nghị)
+### Cách 1: Chạy script tự động (Khuyên dùng)
 
 ```bash
-# SSH vào VPS bằng khóa từ máy quản trị
-ssh sv2324802010261@192.168.100.20
+# 1. SSH vào VPS (qua cổng 2222 nếu đi từ máy thật 192.168.146.1)
+ssh -p 2222 sv2324802010261@192.168.146.123
 
-# Clone mã nguồn từ GitHub
-git clone <LINK_REPO_GITHUB_CUA_BAN> ~/ql_sachonline
+# 2. Clone mã nguồn repo
+git clone https://github.com/agent42-wp/ql_sachonline.git ~/ql_sachonline
 cd ~/ql_sachonline
 
-# Chạy script triển khai (cài MariaDB, Nginx, Python venv, systemd, UFW)
+# 3. Chạy script cài đặt tự động
 sudo bash deploy/setup_vps.sh
 ```
 
-### Cách 2: Cài đặt thủ công từng bước (thuận tiện chụp ảnh minh chứng báo cáo)
+### Cách 2: Cài đặt thủ công từng bước
 
-#### Bước 1: Cài đặt MariaDB, Nginx, Python venv và UFW
+#### Bước 1: Cài các gói phần mềm cần thiết
 ```bash
 sudo apt update && sudo apt install -y mariadb-server nginx python3-venv python3-pip ufw openssl
 ```
 
-#### Bước 2: Cấu hình MariaDB chỉ lắng nghe `127.0.0.1` và nạp dữ liệu
+#### Bước 2: Cấu hình MariaDB và nạp dữ liệu
 ```bash
-# Kiểm tra / chỉnh bind-address = 127.0.0.1 trong /etc/mysql/mariadb.conf.d/50-server.cnf
+# Giới hạn MariaDB chỉ lắng nghe nội bộ
 sudo sed -i 's/^\s*bind-address\s*=.*/bind-address = 127.0.0.1/' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo systemctl enable --now mariadb
-sudo systemctl restart mariadb
 
-# Tạo DB và user riêng sachonline_app (đổi mật khẩu mạnh trước khi chạy)
+# Tạo Database và User riêng sachonline_app
 sudo mariadb -e "
 CREATE DATABASE IF NOT EXISTS sachonline CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER IF NOT EXISTS 'sachonline_app'@'127.0.0.1' IDENTIFIED BY 'MAT_KHAU_MANH_CUA_BAN';
-CREATE USER IF NOT EXISTS 'sachonline_app'@'localhost' IDENTIFIED BY 'MAT_KHAU_MANH_CUA_BAN';
+CREATE USER IF NOT EXISTS 'sachonline_app'@'127.0.0.1' IDENTIFIED BY 'SachOnline_DB_Pass_2026';
+CREATE USER IF NOT EXISTS 'sachonline_app'@'localhost' IDENTIFIED BY 'SachOnline_DB_Pass_2026';
 GRANT SELECT, INSERT, UPDATE, DELETE ON sachonline.* TO 'sachonline_app'@'127.0.0.1';
 GRANT SELECT, INSERT, UPDATE, DELETE ON sachonline.* TO 'sachonline_app'@'localhost';
 FLUSH PRIVILEGES;
 "
 
-# Nạp lược đồ & dữ liệu mẫu đã chuyển đổi sang MariaDB
+# Nạp CSDL đã chuyển đổi
 sudo mariadb sachonline < database/sachonline_mariadb.sql
 ```
 
-#### Bước 3: Cài đặt Backend vào `/opt/sachonline` và tạo tệp `.env`
+#### Bước 3: Thiết lập ứng dụng tại `/opt/sachonline` và tạo `.env`
 ```bash
 sudo mkdir -p /opt/sachonline
 sudo cp -r backend frontend Images database deploy requirements.txt .env.example /opt/sachonline/
@@ -111,23 +118,24 @@ sudo chown -R sv2324802010261:www-data /opt/sachonline
 cd /opt/sachonline
 cp .env.example .env
 chmod 600 .env
-# Mở .env bằng nano để điền DB_PASSWORD (khớp Bước 2) và JWT_SECRET_KEY (sinh bằng: openssl rand -hex 32)
-nano .env
+
+# Cập nhật thông tin DB_PASSWORD và tạo bí mật JWT
+sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=SachOnline_DB_Pass_2026/' .env
+sed -i "s/JWT_SECRET_KEY=.*/JWT_SECRET_KEY=$(openssl rand -hex 32)/" .env
 
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r requirements.txt
 ```
 
-#### Bước 4: Cài dịch vụ `systemd` cho Backend (`127.0.0.1:8000`)
+#### Bước 4: Tạo và kích hoạt dịch vụ `systemd` cho Backend
 ```bash
 sudo cp /opt/sachonline/deploy/sachonline.service /etc/systemd/system/sachonline.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now sachonline
-sudo systemctl status sachonline --no-pager
 ```
 
-#### Bước 5: Cấu hình Nginx Reverse Proxy ở cổng 80
+#### Bước 5: Cấu hình Nginx Reverse Proxy
 ```bash
 sudo cp /opt/sachonline/deploy/nginx-sachonline.conf /etc/nginx/sites-available/sachonline
 sudo ln -sf /etc/nginx/sites-available/sachonline /etc/nginx/sites-enabled/sachonline
@@ -137,7 +145,7 @@ sudo systemctl enable --now nginx
 sudo systemctl reload nginx
 ```
 
-#### Bước 6: Bật tường lửa UFW theo yêu cầu đề bài
+#### Bước 6: Cấu hình quy tắc tường lửa UFW
 ```bash
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
@@ -145,69 +153,53 @@ sudo ufw allow from 192.168.100.0/24 to any port 22 proto tcp
 sudo ufw allow from 192.168.146.1 to any port 22 proto tcp
 sudo ufw allow 80/tcp
 sudo ufw enable
-sudo ufw status verbose
 ```
 
 ---
 
-## 5. Đăng nhập Quản trị (Admin)
+## 5. Tài khoản Đăng nhập & Kiểm thử
 
-Hệ thống tích hợp sẵn tài khoản quản trị trong bảng `ADMIN` (mật khẩu đã băm bằng **bcrypt**):
-
-- **Tên tài khoản**: `admin`
+*Tài khoản Quản trị mẫu (dùng cho môi trường lab nội bộ, mật khẩu đã được băm bcrypt trong CSDL):*
+- **Tài khoản**: `admin`
 - **Mật khẩu**: `admin`
 
-### Cách 1: Đăng nhập trên giao diện Web
-1. Truy cập `http://192.168.100.20`.
-2. Nhấn nút **Đăng nhập** ở góc phải thanh điều hướng.
-3. Nhập tên tài khoản `admin` và mật khẩu `admin`, sau đó nhấn **Đăng nhập**.
-4. Khi đăng nhập thành công, thanh điều hướng hiển thị nhãn **Quản trị** và bạn có thể thêm mới, chỉnh sửa (kèm chọn ảnh bìa từ `Images/`) hoặc xóa sách.
+### Thao tác đăng nhập trên Web:
+1. Mở trình duyệt tại `http://192.168.146.123` (hoặc `http://192.168.100.20`).
+2. Chọn **Đăng nhập**, nhập `admin` / `admin`.
+3. Hệ thống sẽ hiển thị nhãn **Quản trị viên (@admin)** và kích hoạt các nút **Thêm sách**, **Sửa**, **Xóa**.
 
-### Cách 2: Đăng nhập kiểm thử qua REST API (`curl`)
+### Kiểm thử qua REST API (`curl`):
 ```bash
-# Đăng nhập và lưu cookie HttpOnly vào tệp tạm
-curl -i -c /tmp/sachonline_cookies.txt \
-  -X POST http://192.168.100.20/api/auth/login \
+# 1. Kiểm tra API Health
+curl -i http://127.0.0.1/api/health
+
+# 2. Đăng nhập lấy Cookie
+curl -i -c /tmp/cookies.txt -X POST http://127.0.0.1/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin"}'
 
-# Xác nhận phiên đăng nhập hiện tại bằng cookie
-curl -s -b /tmp/sachonline_cookies.txt http://192.168.100.20/api/auth/me
+# 3. Truy vấn API với cookie vừa lấy
+curl -s -b /tmp/cookies.txt http://127.0.0.1/api/auth/me
 ```
-
-*(Nếu VPS đã nạp cơ sở dữ liệu trước khi có tài khoản này, chạy `sudo mariadb sachonline < database/add_admin.sql` để bổ sung mà không mất dữ liệu hiện có.)*
 
 ---
 
-## 6. Lệnh Kiểm chứng Nghiệm thu & Chụp Minh chứng Báo cáo
-
-> Lưu ý quy định chung: **Mọi ảnh chụp màn hình phải thấy MSSV `2324802010261`** (dòng nhắc `sv2324802010261@vps-2324802010261` hoặc tiêu đề web `vps-2324802010261`).
+## 6. Lệnh Kiểm chứng Nghiệm thu (Chụp ảnh Báo cáo)
 
 ```bash
-# 1. Xác nhận các dịch vụ đều active và tự khởi động cùng VPS
+# 1. Kiểm tra trạng thái tự khởi động cùng hệ thống của 3 dịch vụ
 sudo systemctl is-enabled sachonline mariadb nginx
 sudo systemctl status sachonline mariadb nginx --no-pager
 
-# 2. Xác nhận backend (8000) và MariaDB (3306) CHỈ lắng nghe 127.0.0.1, Nginx mở 80
+# 2. Kiểm tra danh sách cổng lắng nghe (xác nhận 8000 và 3306 chỉ mở tại 127.0.0.1)
 sudo ss -tlnp
 
-# 3. Xác nhận quy tắc tường lửa UFW
+# 3. Kiểm tra quy tắc tường lửa UFW
 sudo ufw status verbose
 
-# 4. Xác nhận mật khẩu lưu dạng băm bcrypt trong MariaDB
-sudo mariadb -e "SELECT MaKH, TaiKhoan, LEFT(MatKhau, 35) AS MatKhauHash FROM sachonline.KHACHHANG ORDER BY MaKH DESC LIMIT 5;"
+# 4. Kiểm tra mật khẩu lưu dạng băm bcrypt trong MariaDB
+sudo mariadb -e "SELECT MaKH, TaiKhoan, LEFT(MatKhau,30) AS MatKhauHash FROM sachonline.KHACHHANG ORDER BY MaKH DESC LIMIT 5;"
 
-# 5. Kiểm tra API qua Nginx
-curl -i http://192.168.100.20/api/health
+# 5. Chạy bộ tự động test (Unit Test)
+cd /opt/sachonline && .venv/bin/pytest -v tests/test_api.py
 ```
-
-### Chạy bộ kiểm thử tự động (Unit & API Tests)
-```bash
-cd /opt/sachonline   # hoặc thư mục repo cục bộ
-.venv/bin/pytest -v tests/test_api.py
-```
-
-### Checklist sản phẩm nộp Bài cá nhân 2
-- [ ] Link GitHub công khai chứa đủ mã nguồn, `database/sachonline_mariadb.sql`, `deploy/`, `.env.example`, `README.md` (**KHÔNG có tệp `.env`**).
-- [ ] Báo cáo PDF 5–8 trang (mọi ảnh chụp rõ MSSV `2324802010261`, có mục ghi nhận việc sử dụng AI hỗ trợ).
-- [ ] Video demo 3–5 phút: truy cập `http://192.168.100.20`, đăng ký/đăng nhập, thêm–xem–sửa–xóa sách, chạy `sudo ufw status verbose` và `sudo ss -tlnp`.
