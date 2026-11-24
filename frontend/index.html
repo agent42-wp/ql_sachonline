@@ -12,21 +12,33 @@
   <header class="topbar">
     <div class="container topbar-inner">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">S</div>
-        <div>
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            <path d="M8 7h8" />
+            <path d="M8 11h6" />
+          </svg>
+        </div>
+        <div class="brand-text">
           <h1 class="brand-title">SachOnline</h1>
-          <p class="brand-subtitle">Quản lý kho sách · VPS <strong>vps-2324802010261</strong></p>
+          <p class="brand-subtitle">
+            Hệ thống Quản lý Sách · <span class="mono-badge">vps-2324802010261</span>
+          </p>
         </div>
       </div>
 
-      <nav class="auth-nav" aria-label="Tài khoản người dùng">
-        <span id="health-pill" class="status-pill status-checking" title="Trạng thái kết nối Backend & MariaDB">
-          Đang kiểm tra API...
+      <nav class="auth-nav" aria-label="Trạng thái và tài khoản">
+        <span id="health-pill" class="status-pill status-checking" role="status" aria-live="polite" title="Trạng thái kết nối Backend và MariaDB">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="health-text">Đang kiểm tra API...</span>
         </span>
+
         <div id="guest-actions" class="nav-group">
           <button type="button" id="btn-open-login" class="btn btn-secondary">Đăng nhập</button>
           <button type="button" id="btn-open-register" class="btn btn-primary">Đăng ký</button>
         </div>
+
         <div id="user-actions" class="nav-group hidden">
           <div class="user-badge">
             <span id="user-name" class="user-name"></span>
@@ -39,88 +51,225 @@
   </header>
 
   <main id="main-content" class="container main-layout">
+    <!-- Banner Slider từ bảng SLIDER & thư mục Images/Slider -->
+    <section
+      id="hero-carousel"
+      class="carousel-section hidden"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Banner giới thiệu và khuyến mãi sách"
+    >
+      <div class="carousel-viewport">
+        <div id="carousel-track" class="carousel-track"></div>
+
+        <button type="button" id="btn-slide-prev" class="carousel-arrow carousel-prev" aria-label="Banner trước">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        <button type="button" id="btn-slide-next" class="carousel-arrow carousel-next" aria-label="Banner tiếp theo">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="carousel-bar">
+        <div class="carousel-caption-wrap">
+          <span id="carousel-counter" class="carousel-counter">1 / 1</span>
+          <span id="carousel-caption" class="carousel-caption"></span>
+        </div>
+
+        <div class="carousel-controls">
+          <div id="carousel-dots" class="carousel-dots" role="group" aria-label="Chọn banner"></div>
+          <button
+            type="button"
+            id="btn-slide-toggle"
+            class="btn btn-ghost btn-sm carousel-toggle"
+            aria-pressed="false"
+            aria-label="Tạm dừng trình chiếu banner"
+          >
+            <svg id="icon-pause" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
+            </svg>
+            <svg id="icon-play" class="hidden" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polygon points="6 4 20 12 6 20 6 4" />
+            </svg>
+            <span id="slide-toggle-label">Tạm dừng</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chỉ số tổng quan -->
     <section class="summary-strip" aria-label="Thống kê kho sách">
       <article class="stat-card">
-        <span class="stat-label">Tổng đầu sách</span>
+        <div class="stat-head">
+          <span class="stat-label">Tổng đầu sách</span>
+          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        </div>
         <strong id="stat-total-books" class="stat-value">0</strong>
       </article>
+
       <article class="stat-card">
-        <span class="stat-label">Chủ đề hiện có</span>
+        <div class="stat-head">
+          <span class="stat-label">Chủ đề phân loại</span>
+          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
+          </svg>
+        </div>
         <strong id="stat-total-categories" class="stat-value">0</strong>
       </article>
+
       <article class="stat-card">
-        <span class="stat-label">Nhà xuất bản</span>
+        <div class="stat-head">
+          <span class="stat-label">Nhà xuất bản</span>
+          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <path d="M3 21h18" />
+            <path d="M5 21V7l8-4v18" />
+            <path d="M19 21V11l-6-4" />
+          </svg>
+        </div>
         <strong id="stat-total-publishers" class="stat-value">0</strong>
       </article>
-      <article class="stat-card">
-        <span class="stat-label">Định danh triển khai</span>
+
+      <article class="stat-card stat-card-identity">
+        <div class="stat-head">
+          <span class="stat-label">Định danh triển khai</span>
+          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+        </div>
         <strong class="stat-value stat-mono">2324802010261</strong>
       </article>
     </section>
 
+    <!-- Danh mục & Quản lý Sách -->
     <section class="panel" aria-labelledby="catalog-heading">
       <div class="panel-header">
         <div>
-          <h2 id="catalog-heading">Danh mục Sách</h2>
-          <p class="panel-desc">Tra cứu, thêm mới, chỉnh sửa và xóa đầu sách trực tiếp trên MariaDB.</p>
+          <h2 id="catalog-heading" class="section-title">Danh mục Sách</h2>
+          <p class="panel-desc">Tra cứu theo bìa sách, chủ đề, nhà xuất bản và cập nhật trực tiếp trên MariaDB.</p>
         </div>
-        <button type="button" id="btn-add-book" class="btn btn-primary">
-          + Thêm sách mới
-        </button>
+
+        <div class="panel-toolbar">
+          <div class="view-switcher" role="group" aria-label="Chế độ hiển thị danh mục">
+            <button type="button" id="btn-view-grid" class="view-btn active" aria-pressed="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+              <span>Lưới bìa</span>
+            </button>
+            <button type="button" id="btn-view-table" class="view-btn" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+              <span>Bảng</span>
+            </button>
+          </div>
+
+          <button type="button" id="btn-add-book" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Thêm sách mới</span>
+          </button>
+        </div>
       </div>
 
-      <form id="filter-form" class="filter-bar" role="search">
+      <form id="filter-form" class="filter-bar" role="search" aria-label="Tìm kiếm và lọc sách">
         <div class="field">
           <label for="search-input">Tìm theo tên sách</label>
-          <input
-            id="search-input"
-            type="search"
-            name="q"
-            placeholder="Nhập từ khóa (VD: Tin học, Photoshop, SQL...)"
-            autocomplete="off"
-          />
+          <div class="input-icon-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              id="search-input"
+              type="search"
+              name="q"
+              placeholder="Nhập tên sách (VD: Tin học, Photoshop, Oracle...)"
+              autocomplete="off"
+            />
+          </div>
         </div>
+
         <div class="field">
           <label for="filter-category">Chủ đề</label>
           <select id="filter-category" name="ma_cd">
             <option value="">Tất cả chủ đề</option>
           </select>
         </div>
+
         <div class="field">
           <label for="filter-publisher">Nhà xuất bản</label>
           <select id="filter-publisher" name="ma_nxb">
             <option value="">Tất cả NXB</option>
           </select>
         </div>
+
         <div class="filter-actions">
           <button type="submit" class="btn btn-primary">Lọc</button>
           <button type="button" id="btn-reset-filter" class="btn btn-secondary">Đặt lại</button>
         </div>
       </form>
 
-      <div id="auth-hint" class="notice-banner hidden">
-        Bạn đang ở chế độ xem. Hãy <strong>Đăng nhập</strong> hoặc <strong>Đăng ký</strong> để thêm, sửa, xóa sách.
+      <div id="auth-hint" class="notice-banner hidden" role="note">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span>Bạn đang ở chế độ xem công khai. Hãy <strong>Đăng nhập</strong> hoặc <strong>Đăng ký</strong> để thêm, chỉnh sửa và xóa sách.</span>
       </div>
 
-      <div class="table-wrap" role="region" aria-live="polite" aria-label="Bảng danh sách sách">
+      <!-- Khung hiển thị Lưới bìa sách (Mặc định) -->
+      <div id="books-grid-region" class="books-grid-region" aria-live="polite" aria-busy="false">
+        <div id="books-grid" class="books-grid"></div>
+      </div>
+
+      <!-- Khung hiển thị Bảng chi tiết -->
+      <div id="books-table-region" class="table-wrap hidden" role="region" aria-live="polite" aria-label="Bảng danh sách sách">
         <table class="data-table">
           <thead>
             <tr>
               <th>Mã</th>
-              <th>Tên sách</th>
+              <th>Sách &amp; Bìa</th>
               <th>Chủ đề</th>
               <th>Nhà xuất bản</th>
-              <th class="num">Giá bán (VNĐ)</th>
+              <th class="num">Giá bán</th>
               <th class="num">Số lượng</th>
               <th class="actions-col">Thao tác</th>
             </tr>
           </thead>
-          <tbody id="books-tbody">
-            <tr>
-              <td colspan="7" class="empty-cell">Đang tải dữ liệu sách...</td>
-            </tr>
-          </tbody>
+          <tbody id="books-tbody"></tbody>
         </table>
+      </div>
+
+      <!-- Trạng thái rỗng / lỗi -->
+      <div id="books-state-box" class="state-box hidden" role="status">
+        <svg class="state-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <h3 id="state-title" class="state-title">Không tìm thấy đầu sách phù hợp</h3>
+        <p id="state-desc" class="state-desc">Thử thay đổi từ khóa tìm kiếm hoặc đặt lại bộ lọc danh mục.</p>
+        <button type="button" id="btn-state-action" class="btn btn-secondary">Đặt lại bộ lọc</button>
       </div>
 
       <div class="pagination-bar">
@@ -137,7 +286,7 @@
   <footer class="footer">
     <div class="container footer-inner">
       <span>Bài cá nhân 2 – Điện toán đám mây · SV: Nguyễn Minh Khôi (MSSV: 2324802010261)</span>
-      <span>Stack: FastAPI · MariaDB · Nginx Reverse Proxy · UFW · <code>vps-2324802010261</code></span>
+      <span>FastAPI · MariaDB · Nginx Reverse Proxy · UFW · <code>vps-2324802010261</code></span>
     </div>
   </footer>
 
@@ -146,16 +295,21 @@
     <form id="login-form" class="modal-card" method="dialog">
       <div class="modal-header">
         <h3 id="login-title">Đăng nhập hệ thống</h3>
-        <button type="button" class="icon-btn" data-close-dialog="login-dialog" aria-label="Đóng">×</button>
+        <button type="button" class="icon-btn" data-close-dialog="login-dialog" aria-label="Đóng hộp thoại đăng nhập">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
       <div class="modal-body">
         <div class="field">
           <label for="login-username">Tên tài khoản</label>
-          <input id="login-username" name="username" type="text" required autocomplete="username" placeholder="VD: khoidz hoặc khoi" />
+          <input id="login-username" name="username" type="text" required autocomplete="username" placeholder="Nhập tên tài khoản" />
         </div>
         <div class="field">
           <label for="login-password">Mật khẩu</label>
-          <input id="login-password" name="password" type="password" required autocomplete="current-password" />
+          <input id="login-password" name="password" type="password" required autocomplete="current-password" placeholder="Nhập mật khẩu" />
         </div>
         <p id="login-error" class="form-error hidden" role="alert"></p>
       </div>
@@ -171,16 +325,21 @@
     <form id="register-form" class="modal-card" method="dialog">
       <div class="modal-header">
         <h3 id="register-title">Đăng ký tài khoản mới</h3>
-        <button type="button" class="icon-btn" data-close-dialog="register-dialog" aria-label="Đóng">×</button>
+        <button type="button" class="icon-btn" data-close-dialog="register-dialog" aria-label="Đóng hộp thoại đăng ký">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
       <div class="modal-body form-grid">
         <div class="field full">
           <label for="reg-hoten">Họ và tên *</label>
-          <input id="reg-hoten" name="ho_ten" type="text" required minlength="2" maxlength="50" />
+          <input id="reg-hoten" name="ho_ten" type="text" required minlength="2" maxlength="50" autocomplete="name" />
         </div>
         <div class="field">
           <label for="reg-taikhoan">Tên tài khoản *</label>
-          <input id="reg-taikhoan" name="tai_khoan" type="text" required minlength="3" maxlength="50" pattern="[A-Za-z0-9_.-]+" />
+          <input id="reg-taikhoan" name="tai_khoan" type="text" required minlength="3" maxlength="50" pattern="[A-Za-z0-9_.-]+" autocomplete="username" />
         </div>
         <div class="field">
           <label for="reg-matkhau">Mật khẩu (tối thiểu 6 ký tự) *</label>
@@ -188,15 +347,15 @@
         </div>
         <div class="field full">
           <label for="reg-email">Email *</label>
-          <input id="reg-email" name="email" type="email" required maxlength="100" />
+          <input id="reg-email" name="email" type="email" required maxlength="100" autocomplete="email" />
         </div>
         <div class="field">
           <label for="reg-dienthoai">Điện thoại</label>
-          <input id="reg-dienthoai" name="dien_thoai" type="text" maxlength="20" />
+          <input id="reg-dienthoai" name="dien_thoai" type="text" maxlength="20" autocomplete="tel" />
         </div>
         <div class="field">
           <label for="reg-diachi">Địa chỉ</label>
-          <input id="reg-diachi" name="dia_chi" type="text" maxlength="100" />
+          <input id="reg-diachi" name="dia_chi" type="text" maxlength="100" autocomplete="street-address" />
         </div>
         <p id="register-error" class="form-error full hidden" role="alert"></p>
       </div>
@@ -207,45 +366,93 @@
     </form>
   </dialog>
 
-  <!-- Modal Thêm / Sửa Sách -->
-  <dialog id="book-dialog" class="modal modal-lg" aria-labelledby="book-dialog-title">
+  <!-- Modal Thêm / Sửa Sách với Bộ chọn ảnh từ Images/ -->
+  <dialog id="book-dialog" class="modal modal-xl" aria-labelledby="book-dialog-title">
     <form id="book-form" class="modal-card" method="dialog">
       <div class="modal-header">
         <h3 id="book-dialog-title">Thêm sách mới</h3>
-        <button type="button" class="icon-btn" data-close-dialog="book-dialog" aria-label="Đóng">×</button>
+        <button type="button" class="icon-btn" data-close-dialog="book-dialog" aria-label="Đóng hộp thoại sách">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
-      <div class="modal-body form-grid">
-        <input type="hidden" id="book-id" name="MaSach" />
-        <div class="field full">
-          <label for="book-title">Tên sách *</label>
-          <input id="book-title" name="TenSach" type="text" required maxlength="150" />
+
+      <div class="modal-body book-editor-layout">
+        <div class="editor-preview-col">
+          <span class="field-caption">Xem trước bìa sách</span>
+          <div id="book-cover-preview-box" class="cover-preview-stage">
+            <img id="book-cover-preview-img" class="cover-preview-img hidden" alt="Xem trước ảnh bìa sách" />
+            <div id="book-cover-preview-empty" class="cover-fallback">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              <span>Chưa chọn ảnh bìa</span>
+            </div>
+          </div>
+          <p id="book-cover-preview-name" class="preview-filename">Không có tệp</p>
         </div>
-        <div class="field">
-          <label for="book-category">Chủ đề *</label>
-          <select id="book-category" name="MaCD" required></select>
+
+        <div class="form-grid editor-fields-col">
+          <input type="hidden" id="book-id" name="MaSach" />
+
+          <div class="field full">
+            <label for="book-title">Tên sách *</label>
+            <input id="book-title" name="TenSach" type="text" required maxlength="150" />
+          </div>
+
+          <div class="field">
+            <label for="book-category">Chủ đề *</label>
+            <select id="book-category" name="MaCD" required></select>
+          </div>
+
+          <div class="field">
+            <label for="book-publisher">Nhà xuất bản *</label>
+            <select id="book-publisher" name="MaNXB" required></select>
+          </div>
+
+          <div class="field">
+            <label for="book-price">Giá bán (VNĐ) *</label>
+            <input id="book-price" name="GiaBan" type="number" min="0" step="500" required />
+          </div>
+
+          <div class="field">
+            <label for="book-qty">Số lượng bán *</label>
+            <input id="book-qty" name="SoLuongBan" type="number" min="1" step="1" required />
+          </div>
+
+          <div class="field">
+            <label for="book-cover-select">Chọn ảnh có sẵn trong Images/</label>
+            <select id="book-cover-select" aria-label="Chọn ảnh có sẵn từ thư mục Images">
+              <option value="">-- Không dùng ảnh bìa --</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="book-cover">Hoặc tên tệp ảnh bìa</label>
+            <input id="book-cover" name="AnhBia" type="text" maxlength="100" placeholder="VD: THCB.jpg" />
+          </div>
+
+          <div class="field full">
+            <div class="picker-header">
+              <span class="field-caption">Thư viện ảnh trong <code>Images/</code></span>
+              <span id="picker-count" class="picker-count"></span>
+            </div>
+            <div id="cover-picker-grid" class="cover-picker-grid" role="listbox" aria-label="Chọn ảnh bìa từ thư mục Images"></div>
+          </div>
+
+          <div class="field full">
+            <label for="book-desc">Mô tả nội dung</label>
+            <textarea id="book-desc" name="MoTa" rows="4" placeholder="Nhập tóm tắt nội dung sách..."></textarea>
+          </div>
+
+          <p id="book-error" class="form-error full hidden" role="alert"></p>
         </div>
-        <div class="field">
-          <label for="book-publisher">Nhà xuất bản *</label>
-          <select id="book-publisher" name="MaNXB" required></select>
-        </div>
-        <div class="field">
-          <label for="book-price">Giá bán (VNĐ) *</label>
-          <input id="book-price" name="GiaBan" type="number" min="0" step="500" required />
-        </div>
-        <div class="field">
-          <label for="book-qty">Số lượng bán *</label>
-          <input id="book-qty" name="SoLuongBan" type="number" min="1" step="1" required />
-        </div>
-        <div class="field full">
-          <label for="book-cover">Tên tệp ảnh bìa (tùy chọn)</label>
-          <input id="book-cover" name="AnhBia" type="text" maxlength="100" placeholder="VD: THCB.jpg" />
-        </div>
-        <div class="field full">
-          <label for="book-desc">Mô tả nội dung</label>
-          <textarea id="book-desc" name="MoTa" rows="4" placeholder="Nhập tóm tắt nội dung sách..."></textarea>
-        </div>
-        <p id="book-error" class="form-error full hidden" role="alert"></p>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-close-dialog="book-dialog">Hủy</button>
         <button type="submit" id="btn-save-book" class="btn btn-primary">Lưu thông tin</button>
@@ -254,13 +461,18 @@
   </dialog>
 
   <!-- Modal Xem Chi tiết Sách -->
-  <dialog id="detail-dialog" class="modal modal-lg" aria-labelledby="detail-title">
+  <dialog id="detail-dialog" class="modal modal-xl" aria-labelledby="detail-title">
     <div class="modal-card">
       <div class="modal-header">
         <h3 id="detail-title">Chi tiết sách</h3>
-        <button type="button" class="icon-btn" data-close-dialog="detail-dialog" aria-label="Đóng">×</button>
+        <button type="button" class="icon-btn" data-close-dialog="detail-dialog" aria-label="Đóng chi tiết sách">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
-      <div id="detail-body" class="modal-body detail-content"></div>
+      <div id="detail-body" class="modal-body detail-layout"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-close-dialog="detail-dialog">Đóng</button>
       </div>

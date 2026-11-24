@@ -13,10 +13,10 @@
 Trình duyệt Laptop (http://192.168.100.20)
         │  HTTP :80
         ▼
-  [ UFW Firewall ]  ← Mặc định chặn vào; chỉ mở 80/tcp và 22/tcp từ 192.168.100.0/24
+  [ UFW Firewall ]  ← Mặc định chặn vào; chỉ mở 80/tcp và 22/tcp từ 192.168.100.0/24, 192.168.146.1
         │
         ▼
-  [ Nginx :80 ] ──( / )──────► Frontend tĩnh (HTML/CSS/JS)
+  [ Nginx :80 ] ──( / & /Images/ )──► Frontend tĩnh (HTML/CSS/JS) & Thư mục Images/
         │
         └──( /api/* )────────► FastAPI Backend (systemd, CHỈ lắng nghe 127.0.0.1:8000)
                                       │
@@ -105,7 +105,7 @@ sudo mariadb sachonline < database/sachonline_mariadb.sql
 #### Bước 3: Cài đặt Backend vào `/opt/sachonline` và tạo tệp `.env`
 ```bash
 sudo mkdir -p /opt/sachonline
-sudo cp -r backend frontend database deploy requirements.txt .env.example /opt/sachonline/
+sudo cp -r backend frontend Images database deploy requirements.txt .env.example /opt/sachonline/
 sudo chown -R sv2324802010261:www-data /opt/sachonline
 
 cd /opt/sachonline
@@ -142,6 +142,7 @@ sudo systemctl reload nginx
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow from 192.168.100.0/24 to any port 22 proto tcp
+sudo ufw allow from 192.168.146.1 to any port 22 proto tcp
 sudo ufw allow 80/tcp
 sudo ufw enable
 sudo ufw status verbose
@@ -149,21 +150,7 @@ sudo ufw status verbose
 
 ---
 
-## 5. Tài khoản mẫu để kiểm thử đăng nhập
-
-Tất cả tài khoản mẫu trong `database/sachonline_mariadb.sql` đã được băm sẵn bằng **bcrypt**:
-
-| Loại tài khoản | Tên đăng nhập | Mật khẩu gốc (để test) | Vai trò |
-|---|---|---|---|
-| Quản trị (`ADMIN`) | `khoidz` | `khoikhoi` | `admin` |
-| Khách hàng (`KHACHHANG`) | `khoi` | `khoikhoi` | `customer` |
-| Khách hàng (`KHACHHANG`) | `luongvq` | `12345` | `admin` / `customer` |
-
-*(Ngoài ra có thể bấm nút **Đăng ký** trực tiếp trên giao diện để tạo tài khoản mới và kiểm tra mật khẩu băm `$2b$12$...` trong bảng `KHACHHANG`.)*
-
----
-
-## 6. Lệnh Kiểm chứng Nghiệm thu & Chụp Minh chứng Báo cáo
+## 5. Lệnh Kiểm chứng Nghiệm thu & Chụp Minh chứng Báo cáo
 
 > Lưu ý quy định chung: **Mọi ảnh chụp màn hình phải thấy MSSV `2324802010261`** (dòng nhắc `sv2324802010261@vps-2324802010261` hoặc tiêu đề web `vps-2324802010261`).
 

@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import PROJECT_ROOT, settings
+from app.media import IMAGES_DIR
 from app.routers import auth, books, catalogs
 
 app = FastAPI(
@@ -17,6 +18,9 @@ app = FastAPI(
 app.include_router(catalogs.router)
 app.include_router(auth.router)
 app.include_router(books.router)
+
+if IMAGES_DIR.exists():
+    app.mount("/Images", StaticFiles(directory=IMAGES_DIR), name="images")
 
 FRONTEND_DIR: Path = PROJECT_ROOT / "frontend"
 if FRONTEND_DIR.exists():

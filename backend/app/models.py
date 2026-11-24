@@ -168,3 +168,12 @@ class BinhLuan(Base):
     DiemDanhGia: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     sach: Mapped[Sach] = relationship("Sach", back_populates="binhluan_entries")
+
+
+class Slider(Base):
+    __tablename__ = "SLIDER"
+
+    MaSlider: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    TenSlider: Mapped[str] = mapped_column(String(100), nullable=False)
+    ThuTu: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    HinhAnh: Mapped[str] = mapped_column(String(200), nullable=False)

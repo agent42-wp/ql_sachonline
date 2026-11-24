@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
+from app.media import build_book_image_url, sanitize_image_filename
 from app.models import ChiTietDatHang, ChuDe, NhaXuatBan, Sach, VietSach
 from app.schemas import (
     AuthorRoleOut,
@@ -34,6 +35,7 @@ def _serialize_book(book: Sach) -> BookOut:
         TenSach=book.TenSach.strip(),
         MoTa=book.MoTa,
         AnhBia=book.AnhBia,
+        AnhBiaUrl=build_book_image_url(book.AnhBia),
         NgayCapNhat=book.NgayCapNhat,
         SoLuongBan=book.SoLuongBan,
         GiaBan=float(book.GiaBan),
@@ -127,11 +129,18 @@ def create_book(
     db: Session = Depends(get_db),
 ) -> BookOut:
     _validate_relations(db, payload.MaCD, payload.MaNXB)
+    try:
+        safe_cover = sanitize_image_filename(payload.AnhBia)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
 
     book = Sach(
         TenSach=payload.TenSach.strip(),
         MoTa=payload.MoTa.strip() if payload.MoTa else None,
-        AnhBia=payload.AnhBia.strip() if payload.AnhBia else None,
+        AnhBia=safe_cover,
         NgayCapNhat=datetime.now(),
         SoLuongBan=payload.SoLuongBan,
         GiaBan=payload.GiaBan,
@@ -158,10 +167,17 @@ def update_book(
             detail="Không tìm thấy cuốn sách cần cập nhật.",
         )
     _validate_relations(db, payload.MaCD, payload.MaNXB)
+    try:
+        safe_cover = sanitize_image_filename(payload.AnhBia)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
 
     book.TenSach = payload.TenSach.strip()
     book.MoTa = payload.MoTa.strip() if payload.MoTa else None
-    book.AnhBia = payload.AnhBia.strip() if payload.AnhBia else None
+    book.AnhBia = safe_cover
     book.SoLuongBan = payload.SoLuongBan
     book.GiaBan = payload.GiaBan
     book.MaCD = payload.MaCD

@@ -262,7 +262,7 @@ Chương 7: Nền tảng cơ sở của hệ thống Success Insights: Bốn mà
 Chương 8: Nhận biết và quản lý tám kiểu cộng tác viên.
 Chương 9: Cải thiện người quản lý.
 Xin trân trọng giới thiệu. 
-', 'KT0002.jpg', 9, 8, '2021-01-10 00:00:00', 5);
+', 'KT0005.jpg', 9, 8, '2021-01-10 00:00:00', 5);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (9, 'Cán Bộ Quản Lý Trong Sản Xuất Công Nghiệp', 25000, 'Cuốn sách này gồm những nội dung chính sau:
 Phần 1: Quản lý sản xuất công nghiệp trong kinh tế thị trường
 - Kinh doanh sản xuất công nghiệp trong kinh tế thị trường
@@ -277,10 +277,10 @@ Xin trân trọng giới thiệu.
  
 ', 'KT0001.jpg', 5, 6, '2018-04-12 00:00:00', 89);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (10, 'Tư Duy Chiến Lược (Quản Lý - Tại Sao? Thế Nào?', 18000, 'Khả năng hoạch định dài hạn đồng thời tối ưu hóa tình hình hoạt động ngắn hạn là một yêu cầu bắt buộc phải có đối với các nhà quản lý.Tư Duy Chiến Lược sẽ giúp bạn vạch ra con đường đến thành công đồng thời giúp hình thành các kỹ năng phân tích và hoạch định theo nhóm. Tất cả các lĩnh vực then chốt để hình thành và thực thi một chiến lược đều được trình bày cặn kẽ trong cuốn sách này, từ việc nghiên cứu và thu thập thông tin nền tảng, hình thành một chiến lược mới đến việc xem xét và ứng dụng chiến lược ấy. Cả thảy có 101 chỉ dẫn nhằm cung cấp cho các bạn những lời khuyên thực tiễn hơn, đồng thời bài tập tự đánh giá sẽ giúp bạn xác định xem mình là một nhà tư duy chiến lược hiệu quả đến mức nào. Khi bạn có nhiều tham vọng hơn về việc hoạch định cho tương lai, cẩm nang này sẽ là quyển sách tham khảo không thể thiếu, giúp suy nghĩ của bạn đi đúng hướng.
-Xin trân trọng giới thiệu cuốn sách cùng bạn. ', 'KT0001.jpg', 11, 3, '2003-09-19 00:00:00', 8);
+Xin trân trọng giới thiệu cuốn sách cùng bạn. ', 'KT0003.jpg', 11, 3, '2003-09-19 00:00:00', 8);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (11, 'Quản Lý Dự Án (Quản Lý - Tại Sao? Thế Nào?)', 61000, 'Để thành công trong môi trường kinh doanh cạnh tranh hiện nay, các giám đốc dự án phải đạt được kết quả trong phạm thời gian và ngân sách đưa ra. Biết cách áp dụng các quy trình, phương pháp và kỹ thuật chỉ dẫn trong cuốn Quản Lý Dự Án này, bạn sẽ tăng tối đa khả năng thực hiện công việc và đảm bảo đạt kết quả tối ưu khi thực hiện dự án.
 Được thiết kế phù hợp với tất cả các nhà quản lý ở đủ mọi trình độ, cẩm nang này sẽ trang bị cho bạn những kiến thức cần thiết trong việc quản lý mọi dự án, dù lớn hay nhỏ, để đạt đến thành công. Từ việc khởi xướng một dự án, thúc đẩy, phát triển nhóm dự án đến việc vượt qua những khó khăn, trở ngại; mỗi một khía cạnh của quản lý dự án chuyện nghiệp đều được trình bày một cách rõ nét. Cẩm nang bao gồm các hướng dẫn từng bước về hoạch định dự án và 101 mẹo vặt cung cấp cho bạn những lời khuyên thực tế. 
-', 'KT0001.jpg', 4, 8, '2020-02-12 00:00:00', 4);
+', 'KT0002.jpg', 4, 8, '2020-02-12 00:00:00', 4);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (12, 'Điều Chỉnh Một Số Chính Sách Kinh Tế Ở Trung Quốc (Giai Đoạn 1992 - 2010)', 21000, 'Cuốn sách này tập trung vào một số nội dung chính sau đây:
 
 Tìm hiểu về những nhân tố đòi hỏi Trung Quốc phải điều chỉnh chính sách kinh tế.
@@ -288,7 +288,7 @@ Tìm hiểu về những nhân tố đòi hỏi Trung Quốc phải điều ch�
 Tìm hiểu về những nội dung chính trong điều chỉnh kinh tế ở Trung Quốc giai đoạn từ năm 1992 - 2010.
 
 Tìm hiểu về tác động của việc điều chỉnh chính sách kinh tế của Trung Quốc đối với thế giới và khu vực trong đó có Việt Nam, sau đó rút tỉa một số kinh nghiệm của Trung Quốc trong quá trình điều chỉnh chính sách kinh tế mà Việt Nam có thể tham khảo.
-Tập thể tác giả tham gia công trình này đều là những người chuyên nghiên cứu về Trung Quốc, hy vọng sẽ đem lại cho các bạn nhiều thông tin bổ ích.', 'KT0001.jpg', 1, 7, '2021-04-02 00:00:00', 19);
+Tập thể tác giả tham gia công trình này đều là những người chuyên nghiên cứu về Trung Quốc, hy vọng sẽ đem lại cho các bạn nhiều thông tin bổ ích.', 'KT0004.jpg', 1, 7, '2021-04-02 00:00:00', 19);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (13, '30 phút mỗi ngày để luyện kỹ năng viết câu tiếng Anh', 85000, '30 phút mỗi ngày để luyện kỹ năng viết câu tiếng Anh là một cuốn sách bài tập dành cho những học sinh/sinh viên nghiêm túc quan tâm đến tầm quan trọng của việc nâng cao những yếu tố kỹ thuật cho kỹ năng viết của mình. Rèn luyện để viết cho tốt chẳng khác gì tự trang bị cho mình một sức mạnh cần thiết để thành công - khi đi học cũng như khi ra ngoài xã hội. Trui rèn được một trình độ viết “cứng” không hề là chuyện bỗng nhiên trời cho mà có được; đó phải là kết quả của một quá trình phấn đấu bền bỉ và rèn luyện chăm chỉ.
 
 Đặc nét của sách này là sử dụng cách tiếp cận những kỹ thuật kết hợp câu cơ bản, có nghĩa là, sách không chỉ quan tâm đến việc tránh những sai lỗi, mà còn đặt mục tiêu tạo dựng được những câu hay, linh hoạt, và thể hiện một phong cách riêng. Cạnh đó, sách còn có những điểm đáng lưu ý như: 
@@ -306,7 +306,7 @@ Học sinh/sinh viên tiếp thu tốt nhất khi họ tham gia tích cực và 
 Sử dụng cuốn 30 phút mỗi ngày để luyện kỹ năng viết câu tiếng Anh này sẽ giúp học sinh/sinh viên viết “có nghề” và tự tin hơn".', 'TiengAnh01.jpg', 2, 1, '2016-02-10 00:00:00', 7);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (14, 'Tin Học Ứng Dụng: Thành Thạo Oracle 9i - Quản Trị Cơ Sở Dữ Liệu (Tập 1)', 21000, 'Mục đích của bộ sách này giúp bạn trở nên thành thạo cơ sở dữ liệu (CSDL) Oracle9i, đề cập đến tất cả những kiến thức cần thiết từ mô hình dữ liệu, quản trị CSDL, sao lưu phục hồi, mạng và xử lý sự cố cũng như hiệu chỉnh hiệu suất thực thi..., với sự kết hợp lý thuyết và thực hành về điều mà Nhà quản trị CSDL Oracle9i cần biết để sử dụng CSDL Oracle9i một cách hiệu quả từ chính bộ sách này.
 Bộ sách được chia làm 2 tập, tập 1 đề cập các kiến thức cơ bản về CSDL, mô hình dữ liệu. Bạn sẽ được biết về hệ quản trị CSDL Oracle9i, tạo CSDL, kết nối và quản lý người dùng. Tập 2 hướng dẫn bạn cách nạp, sao lưu và phục hồi dữ liệu, quản lý hoạt động CSDL Oracle9i, thực hiện hiệu chỉnh hiệu suất thực thi và xử lý sự cố cho CSDL.
-Xin trân trọng giới thiệu Tập 1 cùng các bạn. ', 'TH001.jpg', 1, 2, '2019-04-12 00:00:00', 28);
+Xin trân trọng giới thiệu Tập 1 cùng các bạn. ', 'TH006.jpg', 1, 2, '2019-04-12 00:00:00', 28);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (15, 'Mạng Máy Tính Và Hệ Thống Bảo Mật', 23000, 'Mạng Máy Tính Và Hệ Thống Bảo Mật gồm 7 chương:
 Chương I: Tổng quan về công nghệ mạng máy tính và mạng cục bộ.
 Chương II: Các thiết bị mạng thông dụng và các chuẩn kết nối vật lý.
@@ -316,7 +316,7 @@ Chương V: Một số vấn đề an toàn và bảo mật thông tin trên m�
 Chương VI: Giới thiệu hệ điều hành Windows NT.
 Chương VII: Giới thiệu hệ điều hành UNIX.
 Trân trọng giới thiệu. 
-', 'TH001.jpg', 4, 1, '2020-04-29 00:00:00', 4);
+', 'TH007.jpg', 4, 1, '2020-04-29 00:00:00', 4);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (16, 'Thủ Thuật Lập Trình Visual Basic 6', 18000, 'Mục Lục:
 Chương 1: Multimedia.
 Chương 2: String.
@@ -336,7 +336,7 @@ Phụ lục B: Một số tiện ích hỗ trợ lập trình Win32 API.
 Phụ lục C: Một số vấn đề về đóng gói phần mềm.
 Phụ lục D: Giới thiệu một số Website về Visual Basic.
 Trân trọng giới thiệu. 
-', 'TH001.jpg', 6, 7, '2020-07-29 00:00:00', 5);
+', 'TH008.jpg', 6, 7, '2020-07-29 00:00:00', 5);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (17, 'Lập Trình Mạng Trên Windows (Ấn bản dành cho sinh viên)', 16800, 'Chào mừng đến với "Lập Trình Mạng Trên Windows (Ấn bản dành cho sinh viên)". Quyển sách này sẽ hướng dẫn bạn sử dụng một cách hiệu quả bao gồm một số lượng lớn và đa dạng các hàm mạng sẵn có trong Windows 95, Windows 98, Windows NT 4, Windows CE, và Windows 2000/XP/. NET. Sách được chủ định viết dành cho những lập trình viên từ trung cấp đến cao cấp, tuy nhiên những lập trình viên mới bắt đầu tìm hiểu lập trình mạng cũng sẽ nhận thấy đây là một quyển sách không thể thiếu cho các bước xây dựng ứng dụng mạng sau này.
 ', 'TH001.jpg', 5, 5, '2020-03-29 00:00:00', 8);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (18, 'Căn Bản Về Photoshop CS Tinh Chỉnh Và Xử Lý Màu', 25000, '"Căn Bản Về Photoshop CS Tinh Chỉnh Và Xử Lý Màu" gồm 12 chương:
@@ -364,15 +364,15 @@ Chương 6: Duy trì tính bảo mật password và cập nhật với LiveUpdat
 Phần II: Làm việc với Norton AntiVirus 2004.
 Chương 7: Bảo vệ đĩa, file và dữ liệu để tránh bị nhiễm Virus.
 Chương 8: Những điều cần làm nếu phát hiện virus.
-', 'TH002.jpg', 5, 7, '2020-07-29 00:00:00', 4);
-INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (20, 'Tin Học Văn Phòng - Microsoft Word 2000 (Tái Bản Lần Thứ Nhất)', 15600, ' ', 'TH002.jpg', 2, 8, '2020-02-23 00:00:00', 6);
+', 'TH003.jpg', 5, 7, '2020-07-29 00:00:00', 4);
+INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (20, 'Tin Học Văn Phòng - Microsoft Word 2000 (Tái Bản Lần Thứ Nhất)', 15600, ' ', 'TH004.jpg', 2, 8, '2020-02-23 00:00:00', 6);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (21, 'Adobe Photoshop 6.0 và ImageReady 3.0', 21000, 'Cuốn sách Adobe Photoshop 6.0 và ImageReady 3.0 này sẽ giúp bạn tìm hiểu những tính năng tuyệt vời của phiên bản 6.0, nó cũng là con đường ngắn nhất cho những người mới sử dụng Photoshop lần đầu. Với bạn đọc đã sử dụng cuốn sách "Adobe Photoshop 5.5 và ImageReady 2.0" do MK.PUB biên soạn trước đây, cuốn sách này là một cách cập nhật nhanh chóng nhất.
 Adobe Photoshop 6.0 và ImageReady 3.0 gồm hai phần chính, đan xen nhau: 
 
 Adobe Photoshop 6.0: trình bày các kỹ thuật xử lý ảnh cao cấp, các tính năng mới, giúp bạn tạo được các ảnh đẹp, rõ nét và mang tính mỹ thuật cao, hỗ trợ đắc lực cho các chương trình dàn trang và tách màu điện tử. Đặc biệt trong phiên bản này, để đáp ứng cho mong mỏi từ lâu của người dùng, các hình thể vector bắt đầu được đưa vào sử dụng trong môi trường Photoshop.
 
-', 'TH002.jpg', 5, 5, '2020-02-20 00:00:00', 8);
-INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (22, 'Hướng Dẫn Tự Học Photoshop CS (Photoshop 8.0)', 25000, ' ', 'TH003.jpg', 8, 4, '2019-07-29 00:00:00', 9);
+', 'TH005.jpg', 5, 5, '2020-02-20 00:00:00', 8);
+INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (22, 'Hướng Dẫn Tự Học Photoshop CS (Photoshop 8.0)', 25000, ' ', 'TH002.jpg', 8, 4, '2019-07-29 00:00:00', 9);
 INSERT INTO SACH (MaSach, TenSach, GiaBan, MoTa, AnhBia, MaCD, MaNXB, NgayCapNhat, SoLuongBan) VALUES (23, 'Tin Học Văn Phòng - Microsoft Excel 2000 (Tái Bản Lần Thứ Nhất)', 16800, 'Cuốn sách này gồm những nội dung chính sau:
 Chương 1: Giới thiệu
 Chương 2: Soạn thảo văn bản
@@ -386,7 +386,7 @@ Chương 9: Microsoft Equation
 Chương 10: Trình bày văn bản nhanh
 Chương 11: Bài tập mẫu
 Xin trân trọng giới thiệu. 
-', 'TH003.jpg', 6, 5, '2020-01-29 00:00:00', 1);
+', '130318.jpg', 6, 5, '2020-01-29 00:00:00', 1);
 
 -- Dữ liệu bảng VIETSACH (đã bỏ qua dòng MaSach=24 không tồn tại trong SACH để đảm bảo toàn vẹn FK)
 INSERT INTO VIETSACH (MaSach, MaTG, VaiTro, ViTri) VALUES (1, 1, 'Tác giả', '');

@@ -34,7 +34,7 @@ systemctl restart mariadb
 
 echo "=== [3/7] Đồng bộ mã nguồn tới ${APP_DIR} ==="
 mkdir -p "${APP_DIR}"
-cp -r "${REPO_DIR}/backend" "${REPO_DIR}/frontend" "${REPO_DIR}/database" "${REPO_DIR}/deploy" \
+cp -r "${REPO_DIR}/backend" "${REPO_DIR}/frontend" "${REPO_DIR}/Images" "${REPO_DIR}/database" "${REPO_DIR}/deploy" \
   "${REPO_DIR}/requirements.txt" "${REPO_DIR}/.env.example" "${APP_DIR}/"
 
 echo "=== [4/7] Khởi tạo .env, Database và tài khoản MariaDB riêng ==="
@@ -111,6 +111,7 @@ ufw --force reset
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow from "${ADMIN_SUBNET}" to any port 22 proto tcp
+ufw allow from 192.168.146.1 to any port 22 proto tcp
 ufw allow 80/tcp
 ufw --force enable
 

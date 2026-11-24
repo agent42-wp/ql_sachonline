@@ -34,6 +34,7 @@ from app.models import (  # noqa: E402
     KhachHang,
     NhaXuatBan,
     Sach,
+    Slider,
     TacGia,
     VietSach,
 )
@@ -95,8 +96,12 @@ def test_db():
         vs = VietSach(MaTG=1, MaSach=1, VaiTro="Tác giả", ViTri="")
         order = DonDatHang(MaDonHang=1, MaKH=1, DaThanhToan=0, TinhTrangGiaoHang=1)
         order_item = ChiTietDatHang(MaDonHang=1, MaSach=2, SoLuong=1, DonGia=50000)
+        slider1 = Slider(MaSlider=1, TenSlider="Quảng cáo 1", ThuTu=1, HinhAnh="01.jpg")
+        slider2 = Slider(MaSlider=2, TenSlider="Quảng cáo 2", ThuTu=2, HinhAnh="02.jpg")
 
-        db.add_all([cd, nxb, tg, admin, kh, book_free, book_ordered, vs, order, order_item])
+        db.add_all(
+            [cd, nxb, tg, admin, kh, book_free, book_ordered, vs, order, order_item, slider1, slider2]
+        )
         db.commit()
     finally:
         db.close()
@@ -241,6 +246,51 @@ def test_books_crud_and_authorization(client: TestClient):
     # Không cho xóa sách đã có trong đơn đặt hàng (MaSach=2) -> 409
     blocked = client.delete("/api/books/2")
     assert blocked.status_code == 409
+
+    # Chặn path traversal ở trường AnhBia
+    bad_cover = client.post("/api/books", json={**new_book, "AnhBia": "../etc/passwd"})
+    assert bad_cover.status_code == 400
+
+
+def test_images_serving_sliders_and_sql_image_files(client: TestClient):
+    # API trả danh sách slider kèm HinhAnhUrl
+    sliders_res = client.get("/api/sliders")
+    assert sliders_res.status_code == 200
+    sliders = sliders_res.json()
+    assert len(sliders) == 2
+    assert sliders[0]["HinhAnhUrl"] == "/Images/Slider/01.jpg"
+
+    # API liệt kê ảnh bìa hợp lệ trong thư mục Images/ (loại bỏ desktop.ini & icon nhỏ)
+    images_res = client.get("/api/images")
+    assert images_res.status_code == 200
+    filenames = {item["filename"] for item in images_res.json()}
+    assert "THCB.jpg" in filenames
+    assert "KT0005.jpg" in filenames
+    assert "desktop.ini" not in filenames
+    assert "Cancel.jpg" not in filenames
+
+    # BookOut trả sẵn AnhBiaUrl
+    book_res = client.get("/api/books/1")
+    assert book_res.status_code == 200
+    assert book_res.json()["AnhBiaUrl"] == "/Images/THCB.jpg"
+
+    # Phục vụ trực tiếp ảnh tĩnh từ /Images/ và /Images/Slider/
+    cover_static = client.get("/Images/THCB.jpg")
+    assert cover_static.status_code == 200
+    assert cover_static.headers["content-type"].startswith("image/")
+
+    slider_static = client.get("/Images/Slider/01.jpg")
+    assert slider_static.status_code == 200
+    assert slider_static.headers["content-type"].startswith("image/")
+
+    # Xác nhận mọi tệp ảnh SACH.AnhBia và SLIDER.HinhAnh trong sachonline_mariadb.sql đều tồn tại thật trong Images/
+    sql = (PROJECT_ROOT / "database" / "sachonline_mariadb.sql").read_text(encoding="utf-8")
+    images_dir = PROJECT_ROOT / "Images"
+    slider_dir = images_dir / "Slider"
+    for fname in set(re.findall(r"VALUES \(\d+, 'Quảng cáo \d+', \d+, '([^']+)'\);", sql)):
+        assert (slider_dir / fname).is_file(), f"Thiếu ảnh slider: {fname}"
+    for fname in set(re.findall(r"', '([A-Za-z0-9_.-]+\.(?:jpg|jpeg|png|webp))', \d+, \d+,", sql, re.I)):
+        assert (images_dir / fname).is_file(), f"Thiếu ảnh bìa sách: {fname}"
 
 
 def test_mariadb_sql_migration_integrity():

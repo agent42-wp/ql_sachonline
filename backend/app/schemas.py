@@ -61,6 +61,20 @@ class AuthorRoleOut(BaseModel):
     VaiTro: str | None = None
 
 
+class SliderOut(BaseModel):
+    MaSlider: int
+    TenSlider: str
+    ThuTu: int
+    HinhAnh: str
+    HinhAnhUrl: str | None = None
+
+
+class ImageAssetOut(BaseModel):
+    filename: str
+    url: str
+    size_bytes: int
+
+
 # --- Book CRUD Schemas ---
 class BookCreate(BaseModel):
     TenSach: str = Field(..., min_length=1, max_length=150)
@@ -87,6 +101,7 @@ class BookOut(BaseModel):
     TenSach: str
     MoTa: str | None = None
     AnhBia: str | None = None
+    AnhBiaUrl: str | None = None
     NgayCapNhat: datetime | None = None
     SoLuongBan: int
     GiaBan: float
