@@ -9,12 +9,13 @@ const state = {
   sliders: [],
   availableImages: [],
   books: [],
-  viewMode: "grid", // "grid" | "table"
+  viewMode: "grid",
   page: 1,
   pageSize: 12,
   total: 0,
   isLoading: false,
   loadError: null,
+  statsAnimated: false,
   filters: {
     q: "",
     ma_cd: "",
@@ -30,6 +31,7 @@ const state = {
 };
 
 const el = {
+  siteNav: document.getElementById("site-nav"),
   healthPill: document.getElementById("health-pill"),
   healthText: document.getElementById("health-text"),
   guestActions: document.getElementById("guest-actions"),
@@ -37,6 +39,17 @@ const el = {
   userName: document.getElementById("user-name"),
   userRole: document.getElementById("user-role"),
   authHint: document.getElementById("auth-hint"),
+
+  heroChartBars: document.getElementById("hero-chart-bars"),
+  heroChartTotal: document.getElementById("hero-chart-total"),
+  heroRecentBooks: document.getElementById("hero-recent-books"),
+  heroAvgPrice: document.getElementById("hero-avg-price"),
+  heroImageCount: document.getElementById("hero-image-count"),
+  btnHeroAdd: document.getElementById("btn-hero-add"),
+  btnCtaRegister: document.getElementById("btn-cta-register"),
+
+  publisherMarquee: document.getElementById("publisher-marquee"),
+  featureCoverShowcase: document.getElementById("feature-cover-showcase"),
 
   heroCarousel: document.getElementById("hero-carousel"),
   carouselTrack: document.getElementById("carousel-track"),
@@ -119,7 +132,7 @@ const el = {
    Helpers
    ========================================================================== */
 function formatCurrency(amount) {
-  return new Intl.NumberFormat("vi-VN").format(Number(amount || 0)) + " đ";
+  return new Intl.NumberFormat("vi-VN").format(Math.round(Number(amount || 0))) + " đ";
 }
 
 function resolveBookCoverUrl(bookOrFilename) {
@@ -135,17 +148,17 @@ function resolveBookCoverUrl(bookOrFilename) {
   return `/Images/${encodeURIComponent(clean)}`;
 }
 
-function createBookFallbackEl(label = "Chưa có ảnh bìa") {
+function createBookFallbackEl(label = "Chưa có bìa") {
   const wrap = document.createElement("div");
   wrap.className = "cover-fallback";
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
-  svg.setAttribute("width", "28");
-  svg.setAttribute("height", "28");
+  svg.setAttribute("width", "26");
+  svg.setAttribute("height", "26");
   svg.setAttribute("fill", "none");
   svg.setAttribute("stroke", "currentColor");
-  svg.setAttribute("stroke-width", "1.5");
+  svg.setAttribute("stroke-width", "1.6");
   svg.setAttribute("aria-hidden", "true");
 
   const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -160,22 +173,15 @@ function createBookFallbackEl(label = "Chưa có ảnh bìa") {
   return wrap;
 }
 
-function createSafeCoverImg(url, altText, className, onMissingContainer, fallbackLabel) {
-  if (!url) {
-    return createBookFallbackEl(fallbackLabel);
-  }
+function createSafeCoverImg(url, altText, className, fallbackLabel) {
+  if (!url) return createBookFallbackEl(fallbackLabel);
   const img = document.createElement("img");
   img.src = url;
   img.alt = altText;
   img.className = className;
   img.loading = "lazy";
   img.addEventListener("error", () => {
-    const fallback = createBookFallbackEl(fallbackLabel);
-    if (onMissingContainer && img.parentNode === onMissingContainer) {
-      onMissingContainer.replaceChild(fallback, img);
-    } else if (img.parentNode) {
-      img.parentNode.replaceChild(fallback, img);
-    }
+    img.replaceWith(createBookFallbackEl(fallbackLabel));
   });
   return img;
 }
@@ -196,6 +202,24 @@ function setFormError(targetEl, message) {
   }
   targetEl.textContent = message;
   targetEl.classList.remove("hidden");
+}
+
+function animateCounter(node, target) {
+  const numericTarget = Number(target) || 0;
+  node.dataset.target = String(numericTarget);
+  if (prefersReducedMotion.matches || numericTarget <= 0) {
+    node.textContent = String(numericTarget);
+    return;
+  }
+  const duration = 1100;
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    node.textContent = String(Math.round(numericTarget * eased));
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 async function apiRequest(path, options = {}) {
@@ -226,6 +250,120 @@ async function apiRequest(path, options = {}) {
     throw err;
   }
   return data;
+}
+
+/* ==========================================================================
+   Hero Live Floating Cards, Publisher Marquee & Feature Mosaic
+   ========================================================================== */
+function renderHeroCards(allBooks) {
+  // 1. Warm Yellow Bar Chart (top 5 categories by book count)
+  const counts = new Map();
+  let sumPrice = 0;
+  for (const b of allBooks) {
+    const cat = b.TenChuDe || "Khác";
+    counts.set(cat, (counts.get(cat) || 0) + 1);
+    sumPrice += Number(b.GiaBan || 0);
+  }
+
+  const topCats = Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  const maxVal = Math.max(1, ...topCats.map((item) => item[1]));
+
+  el.heroChartBars.replaceChildren();
+  for (const [label, count] of topCats) {
+    const col = document.createElement("div");
+    col.className = "bar-col";
+
+    const valEl = document.createElement("span");
+    valEl.className = "bar-val";
+    valEl.textContent = String(count);
+
+    const fill = document.createElement("div");
+    const bucket = Math.min(80, Math.max(20, Math.round((count / maxVal) * 8) * 10));
+    fill.className = `bar-fill bar-h-${bucket}`;
+
+    const lbl = document.createElement("span");
+    lbl.className = "bar-lbl";
+    lbl.title = label;
+    lbl.textContent = label.split(" ").slice(0, 2).join(" ");
+
+    col.append(valEl, fill, lbl);
+    el.heroChartBars.appendChild(col);
+  }
+  el.heroChartTotal.textContent = `${allBooks.length} đầu sách`;
+
+  // 2. Center Card: 3 Featured Real Books with Covers from Images/
+  el.heroRecentBooks.replaceChildren();
+  for (const book of allBooks.slice(0, 3)) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "hero-book-row";
+    btn.addEventListener("click", () => openBookDetail(book.MaSach));
+
+    const thumb = createSafeCoverImg(
+      resolveBookCoverUrl(book),
+      `Bìa ${book.TenSach}`,
+      "hero-book-thumb",
+      "Sách"
+    );
+
+    const info = document.createElement("span");
+    info.className = "hero-book-info";
+    const name = document.createElement("span");
+    name.className = "hero-book-name";
+    name.textContent = book.TenSach;
+    const cat = document.createElement("span");
+    cat.className = "hero-book-cat";
+    cat.textContent = book.TenChuDe || "Chưa phân loại";
+    info.append(name, cat);
+
+    const price = document.createElement("span");
+    price.className = "hero-book-price";
+    price.textContent = formatCurrency(book.GiaBan);
+
+    btn.append(thumb, info, price);
+    el.heroRecentBooks.appendChild(btn);
+  }
+
+  // 3. Right Card: Avg Price + Image Count
+  const avgPrice = allBooks.length ? sumPrice / allBooks.length : 0;
+  el.heroAvgPrice.textContent = formatCurrency(avgPrice);
+}
+
+function renderPublisherMarquee() {
+  el.publisherMarquee.replaceChildren();
+  const names = state.publishers.length
+    ? state.publishers.map((p) => p.TenNXB)
+    : ["Nhà xuất bản Trẻ", "NXB Thống kê", "Kim đồng", "Đại học quốc gia", "Khoa Học & Kỹ Thuật"];
+
+  // Nhân đôi danh sách để marquee cuộn vô hạn mượt mà
+  const loopItems = [...names, ...names];
+  for (const name of loopItems) {
+    const item = document.createElement("span");
+    item.className = "marquee-item";
+    item.textContent = name;
+    el.publisherMarquee.appendChild(item);
+  }
+}
+
+function renderFeatureCoverShowcase() {
+  el.featureCoverShowcase.replaceChildren();
+  for (const asset of state.availableImages.slice(0, 6)) {
+    const tile = document.createElement("div");
+    tile.className = "mosaic-tile";
+
+    const img = document.createElement("img");
+    img.src = asset.url;
+    img.alt = `Ảnh bìa ${asset.filename}`;
+    img.loading = "lazy";
+
+    const name = document.createElement("span");
+    name.textContent = asset.filename;
+
+    tile.append(img, name);
+    el.featureCoverShowcase.appendChild(tile);
+  }
 }
 
 /* ==========================================================================
@@ -339,7 +477,7 @@ function renderCarousel() {
 }
 
 /* ==========================================================================
-   Auth & Catalog UI
+   Auth & Selects
    ========================================================================== */
 function renderAuthUI() {
   if (state.user) {
@@ -374,7 +512,7 @@ function populateSelect(selectEl, items, valueKey, labelKey, placeholder) {
 }
 
 /* ==========================================================================
-   Book Cover Picker (Images/)
+   Visual Cover Picker (Images/)
    ========================================================================== */
 function updateCoverPreview(rawFilename) {
   const clean = String(rawFilename || "").trim().replace(/^\/?Images\//i, "");
@@ -382,13 +520,11 @@ function updateCoverPreview(rawFilename) {
 
   el.bookCoverPreviewName.textContent = clean || "Không có tệp";
 
-  // Đồng bộ select & trạng thái chọn trong thư viện thumbnail
   const hasOption = Array.from(el.bookCoverSelect.options).some((o) => o.value === clean);
   el.bookCoverSelect.value = hasOption ? clean : "";
 
   el.coverPickerGrid.querySelectorAll(".picker-thumb-btn").forEach((btn) => {
-    const selected = btn.dataset.filename === clean;
-    btn.setAttribute("aria-selected", selected ? "true" : "false");
+    btn.setAttribute("aria-selected", btn.dataset.filename === clean ? "true" : "false");
   });
 
   if (!url) {
@@ -412,15 +548,8 @@ function renderCoverPicker() {
     "-- Không dùng ảnh bìa --"
   );
   el.pickerCount.textContent = `${state.availableImages.length} ảnh sẵn có`;
+  el.heroImageCount.textContent = `${state.availableImages.length} tệp`;
   el.coverPickerGrid.replaceChildren();
-
-  if (!state.availableImages.length) {
-    const msg = document.createElement("p");
-    msg.className = "preview-filename";
-    msg.textContent = "Chưa có ảnh trong thư mục Images/.";
-    el.coverPickerGrid.appendChild(msg);
-    return;
-  }
 
   for (const asset of state.availableImages) {
     const btn = document.createElement("button");
@@ -429,7 +558,7 @@ function renderCoverPicker() {
     btn.dataset.filename = asset.filename;
     btn.setAttribute("role", "option");
     btn.setAttribute("aria-selected", "false");
-    btn.setAttribute("title", asset.filename);
+    btn.title = asset.filename;
 
     const img = document.createElement("img");
     img.src = asset.url;
@@ -451,7 +580,7 @@ function renderCoverPicker() {
 }
 
 /* ==========================================================================
-   Books Rendering (Grid View + Table View + Skeleton / Empty / Error States)
+   Books Catalog Rendering (Grid & Table)
    ========================================================================== */
 function renderLoadingSkeleton() {
   el.booksStateBox.classList.add("hidden");
@@ -463,19 +592,15 @@ function renderLoadingSkeleton() {
   for (let i = 0; i < 8; i += 1) {
     const card = document.createElement("div");
     card.className = "skeleton-card";
-
     const cover = document.createElement("div");
     cover.className = "skeleton-box skeleton-cover";
-
     const body = document.createElement("div");
     body.className = "skeleton-body";
-
-    const line1 = document.createElement("div");
-    line1.className = "skeleton-box skeleton-line";
-    const line2 = document.createElement("div");
-    line2.className = "skeleton-box skeleton-line skeleton-line-short";
-
-    body.append(line1, line2);
+    const l1 = document.createElement("div");
+    l1.className = "skeleton-box skeleton-line";
+    const l2 = document.createElement("div");
+    l2.className = "skeleton-box skeleton-line skeleton-line-short";
+    body.append(l1, l2);
     card.append(cover, body);
     el.booksGrid.appendChild(card);
   }
@@ -496,14 +621,14 @@ function renderBooksGrid() {
 
     const coverFrame = document.createElement("div");
     coverFrame.className = "book-cover-frame";
-    const coverEl = createSafeCoverImg(
-      resolveBookCoverUrl(book),
-      `Bìa sách ${book.TenSach}`,
-      "book-cover-img",
-      coverFrame,
-      "Chưa có bìa"
+    coverFrame.appendChild(
+      createSafeCoverImg(
+        resolveBookCoverUrl(book),
+        `Bìa sách ${book.TenSach}`,
+        "book-cover-img",
+        "Chưa có bìa"
+      )
     );
-    coverFrame.appendChild(coverEl);
     coverBtn.appendChild(coverFrame);
 
     const body = document.createElement("div");
@@ -511,11 +636,9 @@ function renderBooksGrid() {
 
     const metaRow = document.createElement("div");
     metaRow.className = "book-meta-row";
-
     const catTag = document.createElement("span");
     catTag.className = "book-cat-tag";
     catTag.textContent = book.TenChuDe || "Chưa phân loại";
-
     const idTag = document.createElement("span");
     idTag.className = "book-id-tag";
     idTag.textContent = `#${book.MaSach}`;
@@ -536,11 +659,9 @@ function renderBooksGrid() {
 
     const priceRow = document.createElement("div");
     priceRow.className = "book-price-row";
-
     const priceEl = document.createElement("span");
     priceEl.className = "book-price";
     priceEl.textContent = formatCurrency(book.GiaBan);
-
     const qtyEl = document.createElement("span");
     qtyEl.className = "book-qty";
     qtyEl.textContent = `SL: ${book.SoLuongBan}`;
@@ -553,13 +674,13 @@ function renderBooksGrid() {
 
     const btnView = document.createElement("button");
     btnView.type = "button";
-    btnView.className = "btn btn-secondary btn-sm";
+    btnView.className = "btn btn-outline btn-sm";
     btnView.textContent = "Chi tiết";
     btnView.addEventListener("click", () => openBookDetail(book.MaSach));
 
     const btnEdit = document.createElement("button");
     btnEdit.type = "button";
-    btnEdit.className = "btn btn-secondary btn-sm";
+    btnEdit.className = "btn btn-outline btn-sm";
     btnEdit.textContent = "Sửa";
     btnEdit.addEventListener("click", () => openBookEditor(book));
 
@@ -638,13 +759,13 @@ function renderBooksTable() {
 
     const btnView = document.createElement("button");
     btnView.type = "button";
-    btnView.className = "btn btn-secondary btn-sm";
+    btnView.className = "btn btn-outline btn-sm";
     btnView.textContent = "Xem";
     btnView.addEventListener("click", () => openBookDetail(book.MaSach));
 
     const btnEdit = document.createElement("button");
     btnEdit.type = "button";
-    btnEdit.className = "btn btn-secondary btn-sm";
+    btnEdit.className = "btn btn-outline btn-sm";
     btnEdit.textContent = "Sửa";
     btnEdit.addEventListener("click", () => openBookEditor(book));
 
@@ -713,7 +834,7 @@ function renderBooks() {
 async function checkHealth() {
   try {
     await apiRequest("/api/health");
-    el.healthText.textContent = "API & MariaDB: Hoạt động";
+    el.healthText.textContent = "API & DB: Hoạt động";
     el.healthPill.className = "status-pill status-ok";
   } catch {
     el.healthText.textContent = "Mất kết nối API";
@@ -732,11 +853,12 @@ async function restoreSession() {
 
 async function loadCatalogsAndMedia() {
   try {
-    const [categories, publishers, sliders, images] = await Promise.all([
+    const [categories, publishers, sliders, images, summaryBooks] = await Promise.all([
       apiRequest("/api/categories"),
       apiRequest("/api/publishers"),
       apiRequest("/api/sliders").catch(() => []),
       apiRequest("/api/images").catch(() => []),
+      apiRequest("/api/books?page=1&page_size=100").catch(() => ({ total: 0, items: [] })),
     ]);
 
     state.categories = categories;
@@ -744,15 +866,19 @@ async function loadCatalogsAndMedia() {
     state.sliders = sliders;
     state.availableImages = images;
 
-    el.statCategories.textContent = String(categories.length);
-    el.statPublishers.textContent = String(publishers.length);
+    animateCounter(el.statBooks, summaryBooks.total);
+    animateCounter(el.statCategories, categories.length);
+    animateCounter(el.statPublishers, publishers.length);
 
     populateSelect(el.filterCategory, categories, "MaCD", "TenChuDe", "Tất cả chủ đề");
     populateSelect(el.filterPublisher, publishers, "MaNXB", "TenNXB", "Tất cả NXB");
     populateSelect(el.bookCategory, categories, "MaCD", "TenChuDe", null);
     populateSelect(el.bookPublisher, publishers, "MaNXB", "TenNXB", null);
 
+    renderHeroCards(summaryBooks.items || []);
+    renderPublisherMarquee();
     renderCoverPicker();
+    renderFeatureCoverShowcase();
     renderCarousel();
   } catch (err) {
     showToast(err.message, "error");
@@ -809,7 +935,6 @@ async function openBookDetail(maSach) {
         resolveBookCoverUrl(book),
         `Ảnh bìa sách ${book.TenSach}`,
         "book-cover-img",
-        coverStage,
         "Chưa có ảnh bìa"
       )
     );
@@ -924,10 +1049,77 @@ async function handleDeleteBook(book) {
   try {
     await apiRequest(`/api/books/${book.MaSach}`, { method: "DELETE" });
     showToast(`Đã xóa sách #${book.MaSach}.`, "success");
-    await loadBooks();
+    await Promise.all([loadBooks(), refreshHeroSummary()]);
   } catch (err) {
     showToast(err.message, "error");
   }
+}
+
+async function refreshHeroSummary() {
+  try {
+    const summaryBooks = await apiRequest("/api/books?page=1&page_size=100");
+    el.statBooks.textContent = String(summaryBooks.total);
+    renderHeroCards(summaryBooks.items || []);
+  } catch {
+    // Không làm gián đoạn thao tác chính
+  }
+}
+
+/* ==========================================================================
+   Scroll Reveal, Navbar Scroll State, Feature Tabs & FAQ Accordion
+   ========================================================================== */
+function initMicroInteractions() {
+  // Sticky navbar shadow on scroll > 40px
+  const onScroll = () => {
+    el.siteNav.classList.toggle("scrolled", window.scrollY > 40);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Scroll Reveal via IntersectionObserver
+  const reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !prefersReducedMotion.matches) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    reveals.forEach((node) => io.observe(node));
+  } else {
+    reveals.forEach((node) => node.classList.add("visible"));
+  }
+
+  // Feature Tabs
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabPanels = document.querySelectorAll(".tab-panel");
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.tab;
+      tabBtns.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle("active", active);
+        b.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.tabPanel === key);
+      });
+    });
+  });
+
+  // FAQ Accordion
+  document.querySelectorAll(".faq-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      const item = trigger.closest(".faq-item");
+      const isOpen = item.classList.toggle("open");
+      trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  });
 }
 
 /* ==========================================================================
@@ -935,9 +1127,7 @@ async function handleDeleteBook(book) {
    ========================================================================== */
 function bindDialogBackdropClose(dialogEl) {
   dialogEl.addEventListener("click", (evt) => {
-    if (evt.target === dialogEl) {
-      dialogEl.close();
-    }
+    if (evt.target === dialogEl) dialogEl.close();
   });
 }
 
@@ -953,17 +1143,14 @@ function bindEvents() {
     bindDialogBackdropClose
   );
 
-  // Carousel controls & pause on hover / focus / reduced motion
+  // Carousel controls
   el.btnSlidePrev.addEventListener("click", () => goToSlide(state.carousel.index - 1));
   el.btnSlideNext.addEventListener("click", () => goToSlide(state.carousel.index + 1));
   el.btnSlideToggle.addEventListener("click", () => {
     state.carousel.paused = !state.carousel.paused;
     syncCarouselToggleUI();
-    if (state.carousel.paused) {
-      stopCarouselTimer();
-    } else {
-      startCarouselTimer();
-    }
+    if (state.carousel.paused) stopCarouselTimer();
+    else startCarouselTimer();
   });
 
   el.heroCarousel.addEventListener("mouseenter", () => {
@@ -1002,7 +1189,7 @@ function bindEvents() {
     }
   });
 
-  // View Switcher
+  // View switcher
   el.btnViewGrid.addEventListener("click", () => {
     state.viewMode = "grid";
     renderBooks();
@@ -1012,7 +1199,7 @@ function bindEvents() {
     renderBooks();
   });
 
-  // Cover preview live sync
+  // Cover preview sync
   el.bookCoverSelect.addEventListener("change", () => {
     el.bookCover.value = el.bookCoverSelect.value;
     updateCoverPreview(el.bookCover.value);
@@ -1025,19 +1212,24 @@ function bindEvents() {
     el.bookCoverPreviewEmpty.classList.remove("hidden");
   });
 
-  // Auth modals
+  // Auth & CTA triggers
+  const openRegister = () => {
+    el.registerForm.reset();
+    setFormError(el.registerError, "");
+    el.registerDialog.showModal();
+  };
+
   el.btnOpenLogin.addEventListener("click", () => {
     el.loginForm.reset();
     setFormError(el.loginError, "");
     el.loginDialog.showModal();
   });
-
-  el.btnOpenRegister.addEventListener("click", () => {
-    el.registerForm.reset();
-    setFormError(el.registerError, "");
-    el.registerDialog.showModal();
+  el.btnOpenRegister.addEventListener("click", openRegister);
+  el.btnCtaRegister.addEventListener("click", () => {
+    if (state.user) openBookEditor(null);
+    else openRegister();
   });
-
+  el.btnHeroAdd.addEventListener("click", () => openBookEditor(null));
   el.btnAddBook.addEventListener("click", () => openBookEditor(null));
 
   el.btnLogout.addEventListener("click", async () => {
@@ -1125,13 +1317,13 @@ function bindEvents() {
         state.page = 1;
       }
       el.bookDialog.close();
-      await loadBooks();
+      await Promise.all([loadBooks(), refreshHeroSummary()]);
     } catch (err) {
       setFormError(el.bookError, err.message);
     }
   });
 
-  // Filters & State Action
+  // Filters
   el.filterForm.addEventListener("submit", async (evt) => {
     evt.preventDefault();
     state.filters.q = el.searchInput.value.trim();
@@ -1150,11 +1342,8 @@ function bindEvents() {
 
   el.btnResetFilter.addEventListener("click", resetFilters);
   el.btnStateAction.addEventListener("click", async () => {
-    if (el.btnStateAction.dataset.action === "retry") {
-      await loadBooks();
-    } else {
-      await resetFilters();
-    }
+    if (el.btnStateAction.dataset.action === "retry") await loadBooks();
+    else await resetFilters();
   });
 
   el.btnPrevPage.addEventListener("click", async () => {
@@ -1174,6 +1363,7 @@ function bindEvents() {
 }
 
 async function init() {
+  initMicroInteractions();
   bindEvents();
   await Promise.all([checkHealth(), restoreSession(), loadCatalogsAndMedia()]);
   await loadBooks();

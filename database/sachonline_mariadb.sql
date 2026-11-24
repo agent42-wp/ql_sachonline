@@ -441,6 +441,7 @@ INSERT INTO ADMIN (MaAd, HoTen, DienThoai, TenDN, MatKhau, Quyen) VALUES (1, 'Ng
 INSERT INTO ADMIN (MaAd, HoTen, DienThoai, TenDN, MatKhau, Quyen) VALUES (2, 'Võ Quốc Lương', '0988936592', 'luongvq', '$2b$12$dbuEqshRTr3LtKCcWh3Ul.gaA1Dn5exTorP1KMnSCMmHiClX4Kqva', 2);
 INSERT INTO ADMIN (MaAd, HoTen, DienThoai, TenDN, MatKhau, Quyen) VALUES (3, 'Võ Nguyễn Nhật Minh', '012344444', 'minhvnn', '$2b$12$bgyt5BrwAy7OjGlDmukCXu.vBDSgBdpT6Y64ai7awFWcNFJXabUHi', 2);
 INSERT INTO ADMIN (MaAd, HoTen, DienThoai, TenDN, MatKhau, Quyen) VALUES (4, 'Võ Nguyễn Thái Hoàng', '012344444', 'hoangvnt', '$2b$12$i8ZQYIAucpCAj6C6moX9MOnbS8aCmqoYlRIg214mOYhP.hZ6kVf1u', 2);
+INSERT INTO ADMIN (MaAd, HoTen, DienThoai, TenDN, MatKhau, Quyen) VALUES (5, 'Quản trị viên', '', 'admin', '$2b$12$OYESdcjWxPdePYsjYZRDPebjoymNbHdlI8facsmDg8gBL0TNb/cjW', 1);
 
 -- Dữ liệu bảng DONDATHANG
 INSERT INTO DONDATHANG (MaDonHang, MaKH, TinhTrangGiaoHang, NgayDat, NgayGiao) VALUES (1, 1, 4, '2021-05-10 00:00:00', '2021-05-12 00:00:00');

@@ -352,11 +352,12 @@ def test_mariadb_sql_migration_integrity():
         )
     )
     assert len(kh_hashes) == 15
-    assert len(ad_hashes) == 4
+    assert len(ad_hashes) == 5
     assert bcrypt.checkpw(b"khoikhoi", kh_hashes["khoi"].encode())
     assert bcrypt.checkpw(b"12345", kh_hashes["luongvq"].encode())
     assert bcrypt.checkpw(b"khoikhoi", ad_hashes["khoidz"].encode())
     assert bcrypt.checkpw(b"12345", ad_hashes["luongvq"].encode())
+    assert bcrypt.checkpw(b"admin", ad_hashes["admin"].encode())
 
     # Thực thi thực tế toàn bộ 13 bảng + dữ liệu mẫu trên SQLite có bật FOREIGN KEYS để chứng minh toàn vẹn khóa ngoại
     sqlite_script = re.sub(r"^SET\s+.*;\s*$", "", executable_sql, flags=re.MULTILINE)
@@ -378,7 +379,7 @@ def test_mariadb_sql_migration_integrity():
     assert counts["SACH"] == 23
     assert counts["VIETSACH"] == 29
     assert counts["KHACHHANG"] == 15
-    assert counts["ADMIN"] == 4
+    assert counts["ADMIN"] == 5
     assert counts["DONDATHANG"] == 2
     assert counts["CHITIETDATHANG"] == 4
     assert counts["TRANGTIN"] == 2

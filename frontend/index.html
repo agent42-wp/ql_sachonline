@@ -4,39 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SachOnline – Quản Lý Sách Online | vps-2324802010261</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Chuyển tới nội dung chính</a>
 
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Navbar (Sticky, white base, dark CTA, shadow fades in on scroll) -->
+  <header id="site-nav" class="navbar">
+    <div class="container navbar-inner">
+      <a href="#top" class="brand" aria-label="SachOnline Trang chủ">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            <path d="M8 7h8" />
-            <path d="M8 11h6" />
           </svg>
-        </div>
-        <div class="brand-text">
-          <h1 class="brand-title">SachOnline</h1>
-          <p class="brand-subtitle">
-            Hệ thống Quản lý Sách · <span class="mono-badge">vps-2324802010261</span>
-          </p>
-        </div>
-      </div>
+        </span>
+        <span class="brand-name">SachOnline</span>
+        <span class="brand-tag">vps-2324802010261</span>
+      </a>
 
-      <nav class="auth-nav" aria-label="Trạng thái và tài khoản">
-        <span id="health-pill" class="status-pill status-checking" role="status" aria-live="polite" title="Trạng thái kết nối Backend và MariaDB">
+      <nav class="nav-links" aria-label="Điều hướng chính">
+        <a href="#showcase" class="nav-link">Nổi bật</a>
+        <a href="#catalog" class="nav-link">Kho sách</a>
+        <a href="#features" class="nav-link">Tính năng</a>
+        <a href="#faq" class="nav-link">Hỏi đáp</a>
+      </nav>
+
+      <div class="nav-actions">
+        <span id="health-pill" class="status-pill status-checking" role="status" aria-live="polite" title="Trạng thái Backend FastAPI & MariaDB">
           <span class="status-dot" aria-hidden="true"></span>
-          <span id="health-text">Đang kiểm tra API...</span>
+          <span id="health-text">Kiểm tra API...</span>
         </span>
 
         <div id="guest-actions" class="nav-group">
-          <button type="button" id="btn-open-login" class="btn btn-secondary">Đăng nhập</button>
-          <button type="button" id="btn-open-register" class="btn btn-primary">Đăng ký</button>
+          <button type="button" id="btn-open-login" class="btn-nav-login">Đăng nhập</button>
+          <button type="button" id="btn-open-register" class="btn-nav-cta">Đăng ký</button>
         </div>
 
         <div id="user-actions" class="nav-group hidden">
@@ -44,249 +52,698 @@
             <span id="user-name" class="user-name"></span>
             <span id="user-role" class="role-tag"></span>
           </div>
-          <button type="button" id="btn-logout" class="btn btn-ghost">Đăng xuất</button>
+          <button type="button" id="btn-logout" class="btn-nav-login">Đăng xuất</button>
         </div>
-      </nav>
+      </div>
     </div>
   </header>
 
-  <main id="main-content" class="container main-layout">
-    <!-- Banner Slider từ bảng SLIDER & thư mục Images/Slider -->
-    <section
-      id="hero-carousel"
-      class="carousel-section hidden"
-      role="region"
-      aria-roledescription="carousel"
-      aria-label="Banner giới thiệu và khuyến mãi sách"
-    >
-      <div class="carousel-viewport">
-        <div id="carousel-track" class="carousel-track"></div>
+  <main id="main-content">
+    <!-- Hero Section: Centered Serif H1 + Announcement Pill + 3 Floating Realistic UI Cards -->
+    <section id="top" class="hero-section">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="dashed-line dashed-left" aria-hidden="true"></div>
+      <div class="dashed-line dashed-right" aria-hidden="true"></div>
 
-        <button type="button" id="btn-slide-prev" class="carousel-arrow carousel-prev" aria-label="Banner trước">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-
-        <button type="button" id="btn-slide-next" class="carousel-arrow carousel-next" aria-label="Banner tiếp theo">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-      </div>
-
-      <div class="carousel-bar">
-        <div class="carousel-caption-wrap">
-          <span id="carousel-counter" class="carousel-counter">1 / 1</span>
-          <span id="carousel-caption" class="carousel-caption"></span>
+      <div class="container hero-inner">
+        <div class="badge reveal">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <span>Triển khai VPS Ubuntu · Định danh 2324802010261</span>
         </div>
 
-        <div class="carousel-controls">
-          <div id="carousel-dots" class="carousel-dots" role="group" aria-label="Chọn banner"></div>
-          <button
-            type="button"
-            id="btn-slide-toggle"
-            class="btn btn-ghost btn-sm carousel-toggle"
-            aria-pressed="false"
-            aria-label="Tạm dừng trình chiếu banner"
-          >
-            <svg id="icon-pause" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect x="6" y="4" width="4" height="16" rx="1" />
-              <rect x="14" y="4" width="4" height="16" rx="1" />
+        <h1 class="hero-title reveal reveal-delay-1">
+          Quản lý kho sách trực tuyến gọn gàng và trực quan
+        </h1>
+
+        <p class="hero-subtext reveal reveal-delay-2">
+          Tra cứu đầu sách kèm ảnh bìa thực tế, lọc theo chủ đề và nhà xuất bản, đồng bộ dữ liệu trực tiếp trên MariaDB qua FastAPI và Nginx.
+        </p>
+
+        <div class="hero-cta-row reveal reveal-delay-3">
+          <a href="#catalog" class="btn btn-accent btn-lg">
+            <span>Khám phá kho sách</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
             </svg>
-            <svg id="icon-play" class="hidden" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <polygon points="6 4 20 12 6 20 6 4" />
-            </svg>
-            <span id="slide-toggle-label">Tạm dừng</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Chỉ số tổng quan -->
-    <section class="summary-strip" aria-label="Thống kê kho sách">
-      <article class="stat-card">
-        <div class="stat-head">
-          <span class="stat-label">Tổng đầu sách</span>
-          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
-        </div>
-        <strong id="stat-total-books" class="stat-value">0</strong>
-      </article>
-
-      <article class="stat-card">
-        <div class="stat-head">
-          <span class="stat-label">Chủ đề phân loại</span>
-          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-            <line x1="7" y1="7" x2="7.01" y2="7" />
-          </svg>
-        </div>
-        <strong id="stat-total-categories" class="stat-value">0</strong>
-      </article>
-
-      <article class="stat-card">
-        <div class="stat-head">
-          <span class="stat-label">Nhà xuất bản</span>
-          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-            <path d="M3 21h18" />
-            <path d="M5 21V7l8-4v18" />
-            <path d="M19 21V11l-6-4" />
-          </svg>
-        </div>
-        <strong id="stat-total-publishers" class="stat-value">0</strong>
-      </article>
-
-      <article class="stat-card stat-card-identity">
-        <div class="stat-head">
-          <span class="stat-label">Định danh triển khai</span>
-          <svg class="stat-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <line x1="8" y1="21" x2="16" y2="21" />
-            <line x1="12" y1="17" x2="12" y2="21" />
-          </svg>
-        </div>
-        <strong class="stat-value stat-mono">2324802010261</strong>
-      </article>
-    </section>
-
-    <!-- Danh mục & Quản lý Sách -->
-    <section class="panel" aria-labelledby="catalog-heading">
-      <div class="panel-header">
-        <div>
-          <h2 id="catalog-heading" class="section-title">Danh mục Sách</h2>
-          <p class="panel-desc">Tra cứu theo bìa sách, chủ đề, nhà xuất bản và cập nhật trực tiếp trên MariaDB.</p>
-        </div>
-
-        <div class="panel-toolbar">
-          <div class="view-switcher" role="group" aria-label="Chế độ hiển thị danh mục">
-            <button type="button" id="btn-view-grid" class="view-btn active" aria-pressed="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-              </svg>
-              <span>Lưới bìa</span>
-            </button>
-            <button type="button" id="btn-view-table" class="view-btn" aria-pressed="false">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-              <span>Bảng</span>
-            </button>
-          </div>
-
-          <button type="button" id="btn-add-book" class="btn btn-primary">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          </a>
+          <button type="button" id="btn-hero-add" class="btn btn-outline btn-lg">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Thêm sách mới</span>
           </button>
         </div>
-      </div>
 
-      <form id="filter-form" class="filter-bar" role="search" aria-label="Tìm kiếm và lọc sách">
-        <div class="field">
-          <label for="search-input">Tìm theo tên sách</label>
-          <div class="input-icon-wrap">
-            <svg class="input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              id="search-input"
-              type="search"
-              name="q"
-              placeholder="Nhập tên sách (VD: Tin học, Photoshop, Oracle...)"
-              autocomplete="off"
-            />
+        <!-- Three Floating Realistic UI Cards (Live DB Data + Warm Yellow Charts) -->
+        <div class="hero-cards-stage" aria-label="Xem trước dữ liệu kho sách trực tiếp">
+          <!-- Left Card: Warm Yellow Bar Chart (Phân bổ theo chủ đề) -->
+          <article class="hero-card hero-card-left">
+            <div class="hcard-head">
+              <div>
+                <span class="hcard-kicker">Phân bổ danh mục</span>
+                <h3 class="hcard-title">Đầu sách theo chủ đề</h3>
+              </div>
+              <span class="hcard-pill">MariaDB</span>
+            </div>
+            <div id="hero-chart-bars" class="bar-chart" aria-label="Biểu đồ số lượng sách theo chủ đề"></div>
+            <div class="hcard-foot">
+              <span class="hcard-muted">Cập nhật thời gian thực</span>
+              <span id="hero-chart-total" class="hcard-metric">0 đầu sách</span>
+            </div>
+          </article>
+
+          <!-- Center Card: Featured Live Books with Real Covers from Images/ -->
+          <article class="hero-card hero-card-center">
+            <div class="hcard-head">
+              <div>
+                <span class="hcard-kicker">Kho sách mới cập nhật</span>
+                <h3 class="hcard-title">Danh mục hiển thị bìa thật</h3>
+              </div>
+              <span class="hcard-pill hcard-pill-green">Live</span>
+            </div>
+            <div id="hero-recent-books" class="hero-book-list"></div>
+          </article>
+
+          <!-- Right Card: Warm Yellow Sparkline + VPS Telemetry -->
+          <article class="hero-card hero-card-right">
+            <div class="hcard-head">
+              <div>
+                <span class="hcard-kicker">Hạ tầng vận hành</span>
+                <h3 class="hcard-title">vps-2324802010261</h3>
+              </div>
+              <span class="hcard-pill">Nginx :80</span>
+            </div>
+            <div class="sparkline-wrap">
+              <div class="sparkline-tooltip">
+                <span id="hero-avg-price">0 đ</span>
+                <small>Giá trung bình</small>
+              </div>
+              <svg class="sparkline-svg" viewBox="0 0 240 84" preserveAspectRatio="none" aria-hidden="true">
+                <path
+                  d="M0 70 L35 58 L70 62 L105 40 L140 46 L175 20 L210 28 L240 16 L240 84 L0 84 Z"
+                  class="sparkline-area"
+                />
+                <path
+                  d="M0 70 L35 58 L70 62 L105 40 L140 46 L175 20 L210 28 L240 16"
+                  class="sparkline-line"
+                  fill="none"
+                />
+                <circle cx="175" cy="20" r="4.5" class="sparkline-dot" />
+              </svg>
+            </div>
+            <div class="hcard-foot">
+              <span class="hcard-muted">Bìa sẵn trong Images/</span>
+              <span id="hero-image-count" class="hcard-metric">0 tệp</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Publisher Marquee Strip (Step 4) -->
+    <section class="logo-strip" aria-label="Các nhà xuất bản trong cơ sở dữ liệu">
+      <div class="container">
+        <p class="logo-strip-label">Tổng hợp đầu sách từ các nhà xuất bản uy tín trong hệ thống</p>
+      </div>
+      <div class="marquee-wrap">
+        <div id="publisher-marquee" class="marquee-track"></div>
+      </div>
+    </section>
+
+    <!-- Stats Row (Step 9: 4-Column Divided Grid, Playfair 40px numbers) -->
+    <section class="section-compact" aria-label="Thống kê hệ thống">
+      <div class="container">
+        <div class="stats-row reveal">
+          <div class="stat-cell">
+            <strong id="stat-total-books" class="stat-number" data-target="0">0</strong>
+            <span class="stat-caption">Tổng đầu sách đang lưu</span>
+          </div>
+          <div class="stat-cell">
+            <strong id="stat-total-categories" class="stat-number" data-target="0">0</strong>
+            <span class="stat-caption">Chủ đề phân loại</span>
+          </div>
+          <div class="stat-cell">
+            <strong id="stat-total-publishers" class="stat-number" data-target="0">0</strong>
+            <span class="stat-caption">Nhà xuất bản đối tác</span>
+          </div>
+          <div class="stat-cell">
+            <strong class="stat-number stat-number-id">2324802010261</strong>
+            <span class="stat-caption">MSSV · vps-2324802010261</span>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="field">
-          <label for="filter-category">Chủ đề</label>
-          <select id="filter-category" name="ma_cd">
-            <option value="">Tất cả chủ đề</option>
-          </select>
+    <!-- Featured Banner Carousel (Images/Slider/*) -->
+    <section id="showcase" class="section-compact">
+      <div class="container">
+        <div
+          id="hero-carousel"
+          class="carousel-card hidden reveal"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Banner sách nổi bật"
+        >
+          <div class="carousel-viewport">
+            <div id="carousel-track" class="carousel-track"></div>
+
+            <button type="button" id="btn-slide-prev" class="carousel-arrow carousel-prev" aria-label="Banner trước">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            <button type="button" id="btn-slide-next" class="carousel-arrow carousel-next" aria-label="Banner tiếp theo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="carousel-bar">
+            <div class="carousel-caption-wrap">
+              <span id="carousel-counter" class="carousel-counter">1 / 6</span>
+              <span id="carousel-caption" class="carousel-caption"></span>
+            </div>
+
+            <div class="carousel-controls">
+              <div id="carousel-dots" class="carousel-dots" role="group" aria-label="Chọn banner"></div>
+              <button
+                type="button"
+                id="btn-slide-toggle"
+                class="btn btn-outline btn-sm"
+                aria-pressed="false"
+                aria-label="Tạm dừng trình chiếu banner"
+              >
+                <svg id="icon-pause" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="6" y="4" width="4" height="16" rx="1" />
+                  <rect x="14" y="4" width="4" height="16" rx="1" />
+                </svg>
+                <svg id="icon-play" class="hidden" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polygon points="6 4 20 12 6 20 6 4" />
+                </svg>
+                <span id="slide-toggle-label">Tạm dừng</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Product Workspace: Catalog & CRUD Books -->
+    <section id="catalog" class="section-catalog">
+      <div class="dashed-line dashed-left" aria-hidden="true"></div>
+      <div class="dashed-line dashed-right" aria-hidden="true"></div>
+
+      <div class="container">
+        <div class="section-head-center reveal">
+          <h2 class="section-h2">Danh mục kho sách</h2>
+          <p class="section-sub">
+            Tìm kiếm theo tên sách, lọc theo chủ đề hoặc nhà xuất bản, chuyển đổi linh hoạt giữa lưới bìa và bảng quản trị.
+          </p>
         </div>
 
-        <div class="field">
-          <label for="filter-publisher">Nhà xuất bản</label>
-          <select id="filter-publisher" name="ma_nxb">
-            <option value="">Tất cả NXB</option>
-          </select>
+        <div class="catalog-shell">
+          <div class="catalog-top-row">
+            <div class="view-switcher" role="group" aria-label="Chế độ hiển thị danh mục">
+              <button type="button" id="btn-view-grid" class="view-btn active" aria-pressed="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                <span>Lưới bìa</span>
+              </button>
+              <button type="button" id="btn-view-table" class="view-btn" aria-pressed="false">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+                <span>Bảng quản trị</span>
+              </button>
+            </div>
+
+            <button type="button" id="btn-add-book" class="btn btn-accent">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>Thêm sách mới</span>
+            </button>
+          </div>
+
+          <form id="filter-form" class="filter-bar" role="search" aria-label="Tìm kiếm và lọc sách">
+            <div class="field">
+              <label for="search-input">Tìm theo tên sách</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  id="search-input"
+                  type="search"
+                  name="q"
+                  placeholder="Nhập từ khóa (VD: Tin học, Photoshop, Oracle...)"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="filter-category">Chủ đề</label>
+              <select id="filter-category" name="ma_cd">
+                <option value="">Tất cả chủ đề</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="filter-publisher">Nhà xuất bản</label>
+              <select id="filter-publisher" name="ma_nxb">
+                <option value="">Tất cả NXB</option>
+              </select>
+            </div>
+
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-dark">Lọc</button>
+              <button type="button" id="btn-reset-filter" class="btn btn-outline">Đặt lại</button>
+            </div>
+          </form>
+
+          <div id="auth-hint" class="notice-banner hidden" role="note">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span>Bạn đang xem chế độ công khai. Vui lòng <strong>Đăng nhập</strong> hoặc <strong>Đăng ký</strong> để thêm, chỉnh sửa và xóa sách.</span>
+          </div>
+
+          <!-- Grid View -->
+          <div id="books-grid-region" class="books-grid-region" aria-live="polite" aria-busy="false">
+            <div id="books-grid" class="books-grid"></div>
+          </div>
+
+          <!-- Table View -->
+          <div id="books-table-region" class="table-wrap hidden" role="region" aria-live="polite" aria-label="Bảng danh sách sách">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Đầu sách &amp; Ảnh bìa</th>
+                  <th>Chủ đề</th>
+                  <th>Nhà xuất bản</th>
+                  <th class="num">Giá bán</th>
+                  <th class="num">Số lượng</th>
+                  <th class="actions-col">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="books-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Empty / Error State -->
+          <div id="books-state-box" class="state-box hidden" role="status">
+            <svg class="state-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <h3 id="state-title" class="state-title">Không tìm thấy cuốn sách nào phù hợp</h3>
+            <p id="state-desc" class="state-desc">Thử thay đổi từ khóa tìm kiếm hoặc đặt lại bộ lọc danh mục.</p>
+            <button type="button" id="btn-state-action" class="btn btn-outline">Đặt lại bộ lọc</button>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-bar">
+            <span id="pagination-info" class="pagination-info">Hiển thị 0 kết quả</span>
+            <div class="pagination-controls">
+              <button type="button" id="btn-prev-page" class="btn btn-outline btn-sm" disabled>Trang trước</button>
+              <span id="page-indicator" class="page-indicator">Trang 1</span>
+              <button type="button" id="btn-next-page" class="btn btn-outline btn-sm" disabled>Trang sau</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Tab Section (Step 6: Diagonal Crosshatch Pattern, Left-Aligned H2, Warm Icon Tabs) -->
+    <section id="features" class="section-pattern">
+      <div class="container">
+        <h2 class="section-h2 section-h2-left reveal">Kiến trúc hiện đại, vận hành tin cậy</h2>
+
+        <div class="tab-nav" role="tablist" aria-label="Tính năng nổi bật của SachOnline">
+          <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="media">
+            <span class="tab-icon tab-icon-amber" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+            </span>
+            <span>Thư viện ảnh bìa</span>
+          </button>
+
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="security">
+            <span class="tab-icon tab-icon-sky" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+            </span>
+            <span>Bảo mật đa lớp</span>
+          </button>
+
+          <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="mariadb">
+            <span class="tab-icon tab-icon-sage" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+              </svg>
+            </span>
+            <span>CSDL MariaDB</span>
+          </button>
         </div>
 
-        <div class="filter-actions">
-          <button type="submit" class="btn btn-primary">Lọc</button>
-          <button type="button" id="btn-reset-filter" class="btn btn-secondary">Đặt lại</button>
+        <div class="tab-content-grid">
+          <!-- Tab Panel 1: Media -->
+          <div class="tab-panel active" data-tab-panel="media" role="tabpanel">
+            <div class="tab-copy">
+              <span class="tab-icon tab-icon-lg tab-icon-amber" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              </span>
+              <h3 class="tab-heading">Đồng bộ trực tiếp thư mục Images/</h3>
+              <p class="tab-desc">
+                Mọi bìa sách và banner khuyến mãi được phục vụ trực tiếp qua Nginx và FastAPI, kèm trình chọn ảnh trực quan ngay trong hộp thoại thêm/sửa sách.
+              </p>
+              <ul class="check-list">
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Hiển thị bìa sách chuẩn tỷ lệ 4:5 và banner slider 1920×500</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Tự động chuẩn hóa tên tệp và chặn path traversal</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Xem trước ảnh bìa tức thì trước khi lưu vào MariaDB</span>
+                </li>
+              </ul>
+              <p class="tab-footnote">API sẵn sàng tại <code>GET /api/images</code> và <code>GET /api/sliders</code>.</p>
+            </div>
+
+            <div class="tab-visual">
+              <div id="feature-cover-showcase" class="cover-mosaic"></div>
+            </div>
+          </div>
+
+          <!-- Tab Panel 2: Security -->
+          <div class="tab-panel" data-tab-panel="security" role="tabpanel">
+            <div class="tab-copy">
+              <span class="tab-icon tab-icon-lg tab-icon-sky" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+              </span>
+              <h3 class="tab-heading">Tăng cường bảo mật từ ứng dụng đến VPS</h3>
+              <p class="tab-desc">
+                Áp dụng nguyên tắc đặc quyền tối thiểu từ mật khẩu người dùng, phiên đăng nhập đến tường lửa mạng UFW và Reverse Proxy Nginx.
+              </p>
+              <ul class="check-list">
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Băm mật khẩu bằng bcrypt (salt ngẫu nhiên, 12 vòng)</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Phiên JWT lưu trong cookie HttpOnly, SameSite=Lax</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Backend và MariaDB chỉ lắng nghe 127.0.0.1, tường lửa UFW lọc chặt</span>
+                </li>
+              </ul>
+              <p class="tab-footnote">Triển khai chuẩn OWASP trên <code>vps-2324802010261</code>.</p>
+            </div>
+
+            <div class="tab-visual">
+              <div class="arch-card">
+                <div class="arch-row">
+                  <span class="arch-badge">UFW Firewall</span>
+                  <span class="arch-val">Mở 80/tcp · SSH chỉ từ subnet quản trị</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">Nginx :80</span>
+                  <span class="arch-val">Reverse Proxy · CSP · X-Frame-Options</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">FastAPI :8000</span>
+                  <span class="arch-val">Chỉ bind 127.0.0.1 · systemd service</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">MariaDB :3306</span>
+                  <span class="arch-val">User riêng sachonline_app · ORM an toàn</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Panel 3: MariaDB -->
+          <div class="tab-panel" data-tab-panel="mariadb" role="tabpanel">
+            <div class="tab-copy">
+              <span class="tab-icon tab-icon-lg tab-icon-sage" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                </svg>
+              </span>
+              <h3 class="tab-heading">Chuyển đổi trọn vẹn 13 bảng sang MariaDB</h3>
+              <p class="tab-desc">
+                Lược đồ gốc từ SQL Server được chuẩn hóa hoàn chỉnh sang InnoDB UTF-8 (`utf8mb4_unicode_ci`) cùng đầy đủ khóa ngoại và ràng buộc toàn vẹn.
+              </p>
+              <ul class="check-list">
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Bảo vệ toàn vẹn đơn hàng (chặn xóa sách đang có trong CHITIETDATHANG)</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Liên kết tác giả nhiều-nhiều qua VIETSACH và TACGIA</span>
+                </li>
+                <li class="check-item">
+                  <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Kiểm thử tự động với Pytest chứng minh toàn vẹn khóa ngoại</span>
+                </li>
+              </ul>
+              <p class="tab-footnote">Tài liệu OpenAPI tương tác tại <code>/api/docs</code>.</p>
+            </div>
+
+            <div class="tab-visual">
+              <div class="arch-card">
+                <div class="arch-row">
+                  <span class="arch-badge">SACH</span>
+                  <span class="arch-val">23 đầu sách · ảnh bìa khớp thư mục Images/</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">CHUDE &amp; NXB</span>
+                  <span class="arch-val">12 chủ đề · 9 nhà xuất bản · 16 tác giả</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">SLIDER</span>
+                  <span class="arch-val">6 banner quảng cáo từ Images/Slider/</span>
+                </div>
+                <div class="arch-row">
+                  <span class="arch-badge">AUTH</span>
+                  <span class="arch-val">KHACHHANG &amp; ADMIN · bcrypt $2b$12$</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
-
-      <div id="auth-hint" class="notice-banner hidden" role="note">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="16" x2="12" y2="12" />
-          <line x1="12" y1="8" x2="12.01" y2="8" />
-        </svg>
-        <span>Bạn đang ở chế độ xem công khai. Hãy <strong>Đăng nhập</strong> hoặc <strong>Đăng ký</strong> để thêm, chỉnh sửa và xóa sách.</span>
       </div>
+    </section>
 
-      <!-- Khung hiển thị Lưới bìa sách (Mặc định) -->
-      <div id="books-grid-region" class="books-grid-region" aria-live="polite" aria-busy="false">
-        <div id="books-grid" class="books-grid"></div>
+    <!-- FAQ Accordion (Step 9) -->
+    <section id="faq" class="section-faq">
+      <div class="container faq-container">
+        <div class="section-head-center reveal">
+          <h2 class="section-h2">Câu hỏi thường gặp</h2>
+          <p class="section-sub">Thông tin nhanh về cách sử dụng hệ thống quản lý kho sách và dữ liệu ảnh bìa.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Làm thế nào để thêm mới hoặc chỉnh sửa thông tin sách?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq-body">
+              <p>Bạn chỉ cần nhấn <strong>Đăng nhập</strong> (hoặc <strong>Đăng ký</strong> tài khoản mới) trên thanh điều hướng. Sau khi xác thực, bạn có thể nhấn <strong>Thêm sách mới</strong>, hoặc chọn <strong>Sửa / Xóa</strong> trực tiếp trên từng thẻ sách.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Cách chọn ảnh bìa từ thư mục Images/ hoạt động như thế nào?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq-body">
+              <p>Backend tự động quét các tệp ảnh bìa hợp lệ trong thư mục <code>Images/</code> qua endpoint <code>GET /api/images</code>. Trong hộp thoại Thêm/Sửa sách, bạn có thể nhấp chọn trực tiếp vào ảnh thu nhỏ hoặc danh sách thả xuống và xem trước bìa ngay lập tức.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Vì sao một số đầu sách không thể xóa khỏi hệ thống?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq-body">
+              <p>Để đảm bảo toàn vẹn khóa ngoại cơ sở dữ liệu MariaDB, những đầu sách đã phát sinh trong bảng <code>CHITIETDATHANG</code> sẽ được bảo vệ và trả về mã <code>409 Conflict</code> khi thao tác xóa.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span>Ứng dụng đang chạy trên cấu hình máy chủ nào?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq-body">
+              <p>Hệ thống triển khai trên VPS <code>vps-2324802010261</code> (Ubuntu Linux), sử dụng Nginx Reverse Proxy cổng 80, FastAPI + Gunicorn quản lý bằng systemd (chỉ lắng nghe <code>127.0.0.1:8000</code>), MariaDB nội bộ và tường lửa UFW.</p>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <!-- Khung hiển thị Bảng chi tiết -->
-      <div id="books-table-region" class="table-wrap hidden" role="region" aria-live="polite" aria-label="Bảng danh sách sách">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Mã</th>
-              <th>Sách &amp; Bìa</th>
-              <th>Chủ đề</th>
-              <th>Nhà xuất bản</th>
-              <th class="num">Giá bán</th>
-              <th class="num">Số lượng</th>
-              <th class="actions-col">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody id="books-tbody"></tbody>
-        </table>
-      </div>
+    <!-- Dark CTA Banner (Step 9) -->
+    <section class="section-cta">
+      <div class="container">
+        <div class="cta-banner reveal">
+          <svg class="cta-decor cta-decor-left" viewBox="0 0 180 180" fill="none" aria-hidden="true">
+            <circle cx="90" cy="90" r="88" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 6" />
+            <circle cx="90" cy="90" r="52" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+          <svg class="cta-decor cta-decor-right" viewBox="0 0 180 180" fill="none" aria-hidden="true">
+            <rect x="12" y="12" width="156" height="156" rx="24" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 6" />
+          </svg>
 
-      <!-- Trạng thái rỗng / lỗi -->
-      <div id="books-state-box" class="state-box hidden" role="status">
-        <svg class="state-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-        </svg>
-        <h3 id="state-title" class="state-title">Không tìm thấy đầu sách phù hợp</h3>
-        <p id="state-desc" class="state-desc">Thử thay đổi từ khóa tìm kiếm hoặc đặt lại bộ lọc danh mục.</p>
-        <button type="button" id="btn-state-action" class="btn btn-secondary">Đặt lại bộ lọc</button>
-      </div>
-
-      <div class="pagination-bar">
-        <span id="pagination-info" class="pagination-info">Hiển thị 0 kết quả</span>
-        <div class="pagination-controls">
-          <button type="button" id="btn-prev-page" class="btn btn-secondary btn-sm" disabled>Trang trước</button>
-          <span id="page-indicator" class="page-indicator">Trang 1</span>
-          <button type="button" id="btn-next-page" class="btn btn-secondary btn-sm" disabled>Trang sau</button>
+          <h2 class="cta-title">Sẵn sàng quản lý kho sách ngay hôm nay?</h2>
+          <p class="cta-sub">
+            Đăng ký tài khoản thành viên trong vài giây để trải nghiệm đầy đủ tính năng thêm, cập nhật bìa sách và quản trị cơ sở dữ liệu MariaDB.
+          </p>
+          <div class="cta-actions">
+            <button type="button" id="btn-cta-register" class="btn btn-accent btn-lg">
+              <span>Bắt đầu ngay</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+            <a href="#catalog" class="btn btn-cta-ghost btn-lg">Xem danh mục sách</a>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
+  <!-- 4-Column Footer (Step 9) -->
   <footer class="footer">
-    <div class="container footer-inner">
-      <span>Bài cá nhân 2 – Điện toán đám mây · SV: Nguyễn Minh Khôi (MSSV: 2324802010261)</span>
-      <span>FastAPI · MariaDB · Nginx Reverse Proxy · UFW · <code>vps-2324802010261</code></span>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+            </span>
+            <span class="brand-name">SachOnline</span>
+          </div>
+          <p class="footer-desc">
+            Ứng dụng Web Quản lý Sách Online triển khai trên VPS Linux cho Bài cá nhân 2 – Điện toán đám mây.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Điều hướng</h4>
+          <ul class="footer-links">
+            <li><a href="#top">Tổng quan</a></li>
+            <li><a href="#showcase">Banner nổi bật</a></li>
+            <li><a href="#catalog">Danh mục sách</a></li>
+            <li><a href="#features">Tính năng</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Hạ tầng VPS</h4>
+          <ul class="footer-links">
+            <li><a href="/api/docs" target="_blank" rel="noopener">Tài liệu OpenAPI</a></li>
+            <li><a href="/api/health" target="_blank" rel="noopener">Kiểm tra /api/health</a></li>
+            <li><a href="#faq">Câu hỏi thường gặp</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Thông tin triển khai</h4>
+          <ul class="footer-meta">
+            <li>SV: Nguyễn Minh Khôi</li>
+            <li>MSSV: <strong>2324802010261</strong></li>
+            <li>Host: <code>vps-2324802010261</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 SachOnline · Nguyễn Minh Khôi (2324802010261)</span>
+        <span>FastAPI · MariaDB · Nginx Reverse Proxy · UFW</span>
+      </div>
     </div>
   </footer>
 
@@ -314,8 +771,8 @@
         <p id="login-error" class="form-error hidden" role="alert"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close-dialog="login-dialog">Hủy</button>
-        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <button type="button" class="btn btn-outline" data-close-dialog="login-dialog">Hủy</button>
+        <button type="submit" class="btn btn-accent">Đăng nhập</button>
       </div>
     </form>
   </dialog>
@@ -360,13 +817,13 @@
         <p id="register-error" class="form-error full hidden" role="alert"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close-dialog="register-dialog">Hủy</button>
-        <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
+        <button type="button" class="btn btn-outline" data-close-dialog="register-dialog">Hủy</button>
+        <button type="submit" class="btn btn-accent">Tạo tài khoản</button>
       </div>
     </form>
   </dialog>
 
-  <!-- Modal Thêm / Sửa Sách với Bộ chọn ảnh từ Images/ -->
+  <!-- Modal Thêm / Sửa Sách kèm Bộ chọn ảnh từ Images/ -->
   <dialog id="book-dialog" class="modal modal-xl" aria-labelledby="book-dialog-title">
     <form id="book-form" class="modal-card" method="dialog">
       <div class="modal-header">
@@ -385,7 +842,7 @@
           <div id="book-cover-preview-box" class="cover-preview-stage">
             <img id="book-cover-preview-img" class="cover-preview-img hidden" alt="Xem trước ảnh bìa sách" />
             <div id="book-cover-preview-empty" class="cover-fallback">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <circle cx="8.5" cy="8.5" r="1.5" />
                 <path d="M21 15l-5-5L5 21" />
@@ -454,8 +911,8 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close-dialog="book-dialog">Hủy</button>
-        <button type="submit" id="btn-save-book" class="btn btn-primary">Lưu thông tin</button>
+        <button type="button" class="btn btn-outline" data-close-dialog="book-dialog">Hủy</button>
+        <button type="submit" id="btn-save-book" class="btn btn-accent">Lưu thông tin</button>
       </div>
     </form>
   </dialog>
@@ -474,12 +931,12 @@
       </div>
       <div id="detail-body" class="modal-body detail-layout"></div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-close-dialog="detail-dialog">Đóng</button>
+        <button type="button" class="btn btn-dark" data-close-dialog="detail-dialog">Đóng</button>
       </div>
     </div>
   </dialog>
 
-  <!-- Toast thông báo -->
+  <!-- Toast Notifications -->
   <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
 
   <script src="/js/app.js" defer></script>

@@ -150,7 +150,36 @@ sudo ufw status verbose
 
 ---
 
-## 5. Lệnh Kiểm chứng Nghiệm thu & Chụp Minh chứng Báo cáo
+## 5. Đăng nhập Quản trị (Admin)
+
+Hệ thống tích hợp sẵn tài khoản quản trị trong bảng `ADMIN` (mật khẩu đã băm bằng **bcrypt**):
+
+- **Tên tài khoản**: `admin`
+- **Mật khẩu**: `admin`
+
+### Cách 1: Đăng nhập trên giao diện Web
+1. Truy cập `http://192.168.100.20`.
+2. Nhấn nút **Đăng nhập** ở góc phải thanh điều hướng.
+3. Nhập tên tài khoản `admin` và mật khẩu `admin`, sau đó nhấn **Đăng nhập**.
+4. Khi đăng nhập thành công, thanh điều hướng hiển thị nhãn **Quản trị** và bạn có thể thêm mới, chỉnh sửa (kèm chọn ảnh bìa từ `Images/`) hoặc xóa sách.
+
+### Cách 2: Đăng nhập kiểm thử qua REST API (`curl`)
+```bash
+# Đăng nhập và lưu cookie HttpOnly vào tệp tạm
+curl -i -c /tmp/sachonline_cookies.txt \
+  -X POST http://192.168.100.20/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin"}'
+
+# Xác nhận phiên đăng nhập hiện tại bằng cookie
+curl -s -b /tmp/sachonline_cookies.txt http://192.168.100.20/api/auth/me
+```
+
+*(Nếu VPS đã nạp cơ sở dữ liệu trước khi có tài khoản này, chạy `sudo mariadb sachonline < database/add_admin.sql` để bổ sung mà không mất dữ liệu hiện có.)*
+
+---
+
+## 6. Lệnh Kiểm chứng Nghiệm thu & Chụp Minh chứng Báo cáo
 
 > Lưu ý quy định chung: **Mọi ảnh chụp màn hình phải thấy MSSV `2324802010261`** (dòng nhắc `sv2324802010261@vps-2324802010261` hoặc tiêu đề web `vps-2324802010261`).
 
