@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SachOnline – Quản Lý Sách Online | vps-2324802010261</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Chuyển tới nội dung chính</a>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">S</div>
+        <div>
+          <h1 class="brand-title">SachOnline</h1>
+          <p class="brand-subtitle">Quản lý kho sách · VPS <strong>vps-2324802010261</strong></p>
+        </div>
+      </div>
+
+      <nav class="auth-nav" aria-label="Tài khoản người dùng">
+        <span id="health-pill" class="status-pill status-checking" title="Trạng thái kết nối Backend & MariaDB">
+          Đang kiểm tra API...
+        </span>
+        <div id="guest-actions" class="nav-group">
+          <button type="button" id="btn-open-login" class="btn btn-secondary">Đăng nhập</button>
+          <button type="button" id="btn-open-register" class="btn btn-primary">Đăng ký</button>
+        </div>
+        <div id="user-actions" class="nav-group hidden">
+          <div class="user-badge">
+            <span id="user-name" class="user-name"></span>
+            <span id="user-role" class="role-tag"></span>
+          </div>
+          <button type="button" id="btn-logout" class="btn btn-ghost">Đăng xuất</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="container main-layout">
+    <section class="summary-strip" aria-label="Thống kê kho sách">
+      <article class="stat-card">
+        <span class="stat-label">Tổng đầu sách</span>
+        <strong id="stat-total-books" class="stat-value">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Chủ đề hiện có</span>
+        <strong id="stat-total-categories" class="stat-value">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Nhà xuất bản</span>
+        <strong id="stat-total-publishers" class="stat-value">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Định danh triển khai</span>
+        <strong class="stat-value stat-mono">2324802010261</strong>
+      </article>
+    </section>
+
+    <section class="panel" aria-labelledby="catalog-heading">
+      <div class="panel-header">
+        <div>
+          <h2 id="catalog-heading">Danh mục Sách</h2>
+          <p class="panel-desc">Tra cứu, thêm mới, chỉnh sửa và xóa đầu sách trực tiếp trên MariaDB.</p>
+        </div>
+        <button type="button" id="btn-add-book" class="btn btn-primary">
+          + Thêm sách mới
+        </button>
+      </div>
+
+      <form id="filter-form" class="filter-bar" role="search">
+        <div class="field">
+          <label for="search-input">Tìm theo tên sách</label>
+          <input
+            id="search-input"
+            type="search"
+            name="q"
+            placeholder="Nhập từ khóa (VD: Tin học, Photoshop, SQL...)"
+            autocomplete="off"
+          />
+        </div>
+        <div class="field">
+          <label for="filter-category">Chủ đề</label>
+          <select id="filter-category" name="ma_cd">
+            <option value="">Tất cả chủ đề</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-publisher">Nhà xuất bản</label>
+          <select id="filter-publisher" name="ma_nxb">
+            <option value="">Tất cả NXB</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="btn btn-primary">Lọc</button>
+          <button type="button" id="btn-reset-filter" class="btn btn-secondary">Đặt lại</button>
+        </div>
+      </form>
+
+      <div id="auth-hint" class="notice-banner hidden">
+        Bạn đang ở chế độ xem. Hãy <strong>Đăng nhập</strong> hoặc <strong>Đăng ký</strong> để thêm, sửa, xóa sách.
+      </div>
+
+      <div class="table-wrap" role="region" aria-live="polite" aria-label="Bảng danh sách sách">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mã</th>
+              <th>Tên sách</th>
+              <th>Chủ đề</th>
+              <th>Nhà xuất bản</th>
+              <th class="num">Giá bán (VNĐ)</th>
+              <th class="num">Số lượng</th>
+              <th class="actions-col">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="books-tbody">
+            <tr>
+              <td colspan="7" class="empty-cell">Đang tải dữ liệu sách...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-bar">
+        <span id="pagination-info" class="pagination-info">Hiển thị 0 kết quả</span>
+        <div class="pagination-controls">
+          <button type="button" id="btn-prev-page" class="btn btn-secondary btn-sm" disabled>Trang trước</button>
+          <span id="page-indicator" class="page-indicator">Trang 1</span>
+          <button type="button" id="btn-next-page" class="btn btn-secondary btn-sm" disabled>Trang sau</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>Bài cá nhân 2 – Điện toán đám mây · SV: Nguyễn Minh Khôi (MSSV: 2324802010261)</span>
+      <span>Stack: FastAPI · MariaDB · Nginx Reverse Proxy · UFW · <code>vps-2324802010261</code></span>
+    </div>
+  </footer>
+
+  <!-- Modal Đăng nhập -->
+  <dialog id="login-dialog" class="modal" aria-labelledby="login-title">
+    <form id="login-form" class="modal-card" method="dialog">
+      <div class="modal-header">
+        <h3 id="login-title">Đăng nhập hệ thống</h3>
+        <button type="button" class="icon-btn" data-close-dialog="login-dialog" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="login-username">Tên tài khoản</label>
+          <input id="login-username" name="username" type="text" required autocomplete="username" placeholder="VD: khoidz hoặc khoi" />
+        </div>
+        <div class="field">
+          <label for="login-password">Mật khẩu</label>
+          <input id="login-password" name="password" type="password" required autocomplete="current-password" />
+        </div>
+        <p id="login-error" class="form-error hidden" role="alert"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="login-dialog">Hủy</button>
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Đăng ký -->
+  <dialog id="register-dialog" class="modal" aria-labelledby="register-title">
+    <form id="register-form" class="modal-card" method="dialog">
+      <div class="modal-header">
+        <h3 id="register-title">Đăng ký tài khoản mới</h3>
+        <button type="button" class="icon-btn" data-close-dialog="register-dialog" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body form-grid">
+        <div class="field full">
+          <label for="reg-hoten">Họ và tên *</label>
+          <input id="reg-hoten" name="ho_ten" type="text" required minlength="2" maxlength="50" />
+        </div>
+        <div class="field">
+          <label for="reg-taikhoan">Tên tài khoản *</label>
+          <input id="reg-taikhoan" name="tai_khoan" type="text" required minlength="3" maxlength="50" pattern="[A-Za-z0-9_.-]+" />
+        </div>
+        <div class="field">
+          <label for="reg-matkhau">Mật khẩu (tối thiểu 6 ký tự) *</label>
+          <input id="reg-matkhau" name="mat_khau" type="password" required minlength="6" maxlength="72" autocomplete="new-password" />
+        </div>
+        <div class="field full">
+          <label for="reg-email">Email *</label>
+          <input id="reg-email" name="email" type="email" required maxlength="100" />
+        </div>
+        <div class="field">
+          <label for="reg-dienthoai">Điện thoại</label>
+          <input id="reg-dienthoai" name="dien_thoai" type="text" maxlength="20" />
+        </div>
+        <div class="field">
+          <label for="reg-diachi">Địa chỉ</label>
+          <input id="reg-diachi" name="dia_chi" type="text" maxlength="100" />
+        </div>
+        <p id="register-error" class="form-error full hidden" role="alert"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="register-dialog">Hủy</button>
+        <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Thêm / Sửa Sách -->
+  <dialog id="book-dialog" class="modal modal-lg" aria-labelledby="book-dialog-title">
+    <form id="book-form" class="modal-card" method="dialog">
+      <div class="modal-header">
+        <h3 id="book-dialog-title">Thêm sách mới</h3>
+        <button type="button" class="icon-btn" data-close-dialog="book-dialog" aria-label="Đóng">×</button>
+      </div>
+      <div class="modal-body form-grid">
+        <input type="hidden" id="book-id" name="MaSach" />
+        <div class="field full">
+          <label for="book-title">Tên sách *</label>
+          <input id="book-title" name="TenSach" type="text" required maxlength="150" />
+        </div>
+        <div class="field">
+          <label for="book-category">Chủ đề *</label>
+          <select id="book-category" name="MaCD" required></select>
+        </div>
+        <div class="field">
+          <label for="book-publisher">Nhà xuất bản *</label>
+          <select id="book-publisher" name="MaNXB" required></select>
+        </div>
+        <div class="field">
+          <label for="book-price">Giá bán (VNĐ) *</label>
+          <input id="book-price" name="GiaBan" type="number" min="0" step="500" required />
+        </div>
+        <div class="field">
+          <label for="book-qty">Số lượng bán *</label>
+          <input id="book-qty" name="SoLuongBan" type="number" min="1" step="1" required />
+        </div>
+        <div class="field full">
+          <label for="book-cover">Tên tệp ảnh bìa (tùy chọn)</label>
+          <input id="book-cover" name="AnhBia" type="text" maxlength="100" placeholder="VD: THCB.jpg" />
+        </div>
+        <div class="field full">
+          <label for="book-desc">Mô tả nội dung</label>
+          <textarea id="book-desc" name="MoTa" rows="4" placeholder="Nhập tóm tắt nội dung sách..."></textarea>
+        </div>
+        <p id="book-error" class="form-error full hidden" role="alert"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="book-dialog">Hủy</button>
+        <button type="submit" id="btn-save-book" class="btn btn-primary">Lưu thông tin</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Xem Chi tiết Sách -->
+  <dialog id="detail-dialog" class="modal modal-lg" aria-labelledby="detail-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detail-title">Chi tiết sách</h3>
+        <button type="button" class="icon-btn" data-close-dialog="detail-dialog" aria-label="Đóng">×</button>
+      </div>
+      <div id="detail-body" class="modal-body detail-content"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-close-dialog="detail-dialog">Đóng</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast thông báo -->
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

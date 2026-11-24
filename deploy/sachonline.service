@@ -1,0 +1,19 @@
+[Unit]
+Description=SachOnline FastAPI Backend Service (vps-2324802010261)
+After=network.target mariadb.service
+Wants=mariadb.service
+
+[Service]
+Type=simple
+User=sv2324802010261
+Group=www-data
+WorkingDirectory=/opt/sachonline/backend
+EnvironmentFile=/opt/sachonline/.env
+ExecStart=/opt/sachonline/.venv/bin/gunicorn -w 2 -k uvicorn.workers.UvicornWorker app.main:app --bind 127.0.0.1:8000 --access-logfile - --error-logfile -
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

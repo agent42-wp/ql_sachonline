@@ -1,0 +1,29 @@
+# Biến môi trường & bí mật (TUYỆT ĐỐI không đưa lên GitHub)
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database tạm & logs
+*.db
+*.sqlite3
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tài liệu đề bài / báo cáo cá nhân (giữ cục bộ, không cần đưa lên repo mã nguồn)
+btdtdm_canhan.docx
+MotaDoAnBaoCao.pdf
